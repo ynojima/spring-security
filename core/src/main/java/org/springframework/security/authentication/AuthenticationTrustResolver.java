@@ -43,6 +43,9 @@ public interface AuthenticationTrustResolver {
 	 */
 	boolean isAnonymous(Authentication authentication);
 
+
+	boolean isFullyAnonymous(Authentication authentication);
+
 	/**
 	 * Indicates whether the passed <code>Authentication</code> token represents user that
 	 * has been remembered (i.e. not a user that has been fully authenticated).

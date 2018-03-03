@@ -195,9 +195,6 @@ public class ExceptionTranslationFilter extends GenericFilterBean {
 	protected void sendStartAuthentication(HttpServletRequest request,
 			HttpServletResponse response, FilterChain chain,
 			AuthenticationException reason) throws ServletException, IOException {
-		// SEC-112: Clear the SecurityContextHolder's Authentication, as the
-		// existing Authentication is no longer considered valid
-		SecurityContextHolder.getContext().setAuthentication(null);
 		requestCache.saveRequest(request, response);
 		logger.debug("Calling Authentication entry point.");
 		authenticationEntryPoint.commence(request, response, reason);
