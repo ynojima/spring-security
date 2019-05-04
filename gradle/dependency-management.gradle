@@ -183,6 +183,7 @@ dependencyManagement {
 		dependency 'org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.0.1.Final'
 		dependency 'org.jboss:jandex:2.0.3.Final'
 		dependency 'org.mockito:mockito-core:2.23.4'
+		dependency 'org.modelmapper:modelmapper:0.7.8'
 		dependency 'org.objenesis:objenesis:2.6'
 		dependency 'org.openid4java:openid4java-nodeps:0.9.6'
 		dependency 'org.ow2.asm:asm:6.2.1'
