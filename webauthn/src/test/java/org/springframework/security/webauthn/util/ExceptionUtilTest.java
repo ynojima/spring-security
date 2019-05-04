@@ -40,6 +40,7 @@ public class ExceptionUtilTest {
 		map.put(new com.webauthn4j.validator.exception.BadOriginException("dummy"), BadOriginException.class);
 		map.put(new com.webauthn4j.validator.exception.BadRpIdException("dummy"), BadRpIdException.class);
 		map.put(new com.webauthn4j.validator.exception.BadSignatureException("dummy"), BadSignatureException.class);
+		map.put(new com.webauthn4j.metadata.exception.BadStatusException("dummy"), BadStatusException.class);
 		map.put(new com.webauthn4j.validator.exception.CertificateException("dummy"), CertificateException.class);
 		map.put(new com.webauthn4j.validator.exception.ConstraintViolationException("dummy"), ConstraintViolationException.class);
 		map.put(new com.webauthn4j.validator.exception.MaliciousCounterValueException("dummy"), MaliciousCounterValueException.class);

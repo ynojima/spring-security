@@ -58,6 +58,8 @@ public class ExceptionUtil {
 			return new BadRpIdException(e.getMessage(), e);
 		} else if (e instanceof com.webauthn4j.validator.exception.BadSignatureException) {
 			return new BadSignatureException(e.getMessage(), e);
+		} else if (e instanceof com.webauthn4j.metadata.exception.BadStatusException) {
+			return new BadStatusException(e.getMessage(), e);
 		} else if (e instanceof com.webauthn4j.validator.exception.CertificateException) {
 			return new CertificateException(e.getMessage(), e);
 		} else if (e instanceof com.webauthn4j.validator.exception.ConstraintViolationException) {

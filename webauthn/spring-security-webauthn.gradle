@@ -12,6 +12,7 @@ dependencies {
     compile("org.springframework:spring-web")
 
     compile("com.webauthn4j:webauthn4j-core")
+    compile("com.webauthn4j:webauthn4j-metadata")
 
     provided 'javax.servlet:javax.servlet-api'
 
