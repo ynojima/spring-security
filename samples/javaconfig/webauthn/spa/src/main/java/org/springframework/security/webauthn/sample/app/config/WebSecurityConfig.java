@@ -39,6 +39,8 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticatorService;
 import org.springframework.security.webauthn.config.configurers.WebAuthnAuthenticationProviderConfigurer;
+import org.springframework.security.webauthn.sample.app.cable.CableAuthenticationExtensionOptionProvider;
+import org.springframework.security.webauthn.sample.app.cable.CableRegistrationExtensionOptionProvider;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 
 import static org.springframework.security.webauthn.config.configurers.WebAuthnLoginConfigurer.webAuthnLogin;
@@ -113,6 +115,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.registrationExtensions()
 					.put(new SupportedExtensionsExtensionClientInput(true))
+					.put(new CableRegistrationExtensionOptionProvider())
+				.and()
+				.authenticationExtensions()
+					.put(new CableAuthenticationExtensionOptionProvider())
 				.and()
 				.loginPage("/login")
 				.usernameParameter("username")

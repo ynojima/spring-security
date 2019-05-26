@@ -24,6 +24,7 @@ import org.springframework.security.webauthn.sample.infrastructure.util.jpa.conv
 import org.springframework.security.webauthn.sample.infrastructure.util.jpa.converter.AuthenticatorTransportConverter;
 
 import javax.persistence.*;
+import java.security.KeyPair;
 import java.util.Set;
 
 /**
@@ -57,6 +58,8 @@ public class AuthenticatorEntity implements Authenticator {
 	@Lob
 	@Convert(converter = AttestationStatementConverter.class)
 	private AttestationStatement attestationStatement;
+
+	private KeyPair cableKayPair;
 
 	public String getFormat() {
 		return attestationStatement.getFormat();
@@ -117,5 +120,13 @@ public class AuthenticatorEntity implements Authenticator {
 
 	public void setAttestationStatement(AttestationStatement attestationStatement) {
 		this.attestationStatement = attestationStatement;
+	}
+
+	public KeyPair getCableKayPair() {
+		return cableKayPair;
+	}
+
+	public void setCableKayPair(KeyPair cableKayPair) {
+		this.cableKayPair = cableKayPair;
 	}
 }

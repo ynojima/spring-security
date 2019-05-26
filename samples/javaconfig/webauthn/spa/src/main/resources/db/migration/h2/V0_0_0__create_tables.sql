@@ -35,6 +35,7 @@ CREATE TABLE m_authenticator(
   credential_id          BLOB           NOT NULL,
   credential_public_key  TEXT NOT NULL,
   attestation_statement  TEXT NOT NULL,
+  cable_key_pair         TEXT           NOT NULL,
   primary key(id)
 );
 
