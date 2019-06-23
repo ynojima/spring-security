@@ -24,6 +24,7 @@ import com.webauthn4j.data.extension.client.AuthenticationExtensionClientInput;
 import com.webauthn4j.data.extension.client.AuthenticationExtensionsClientInputs;
 import com.webauthn4j.data.extension.client.RegistrationExtensionClientInput;
 import org.junit.Test;
+import org.springframework.security.webauthn.endpoint.Parameters;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +46,14 @@ public class AttestationOptionsTest {
 		AttestationConveyancePreference attestation = AttestationConveyancePreference.NONE;
 		AuthenticationExtensionsClientInputs<RegistrationExtensionClientInput> registrationExtensionsClientInputs = new AuthenticationExtensionsClientInputs<>();
 		AuthenticationExtensionsClientInputs<AuthenticationExtensionClientInput> authenticationExtensionsClientInputs = new AuthenticationExtensionsClientInputs<>();
+		Parameters parameters = new Parameters(
+				"username",
+				"password",
+				"credentialId",
+				"clientDataJSON",
+				"authenticatorData",
+				"signature",
+				"clientExtensionsJSON");
 		AttestationOptions instanceA =
 				new AttestationOptions(rpEntity, userEntity, challenge, pubKeyCredParams, registrationTimeout,
 						credentialIds, authenticatorSelection, attestation, registrationExtensionsClientInputs);

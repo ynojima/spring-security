@@ -23,6 +23,7 @@ import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.data.extension.client.AuthenticationExtensionClientInput;
 import com.webauthn4j.data.extension.client.AuthenticationExtensionsClientInputs;
 import org.junit.Test;
+import org.springframework.security.webauthn.endpoint.Parameters;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,11 +39,18 @@ public class AssertionOptionsTest {
 		Long authenticationTimeout = 1000L;
 		List<PublicKeyCredentialDescriptor> credentialIds = Collections.singletonList(new PublicKeyCredentialDescriptor(PublicKeyCredentialType.PUBLIC_KEY, new byte[32], null));
 		AuthenticationExtensionsClientInputs<AuthenticationExtensionClientInput> authenticationExtensionsClientInputs = new AuthenticationExtensionsClientInputs<>();
-
+		Parameters parameters = new Parameters(
+				"username",
+				"password",
+				"credentialId",
+				"clientDataJSON",
+				"authenticatorData",
+				"signature",
+				"clientExtensionsJSON");
 		AssertionOptions instanceA =
-				new AssertionOptions(challenge, authenticationTimeout, rpId, credentialIds, authenticationExtensionsClientInputs);
+				new AssertionOptions(challenge, authenticationTimeout, rpId, credentialIds, authenticationExtensionsClientInputs, parameters);
 		AssertionOptions instanceB =
-				new AssertionOptions(challenge, authenticationTimeout, rpId, credentialIds, authenticationExtensionsClientInputs);
+				new AssertionOptions(challenge, authenticationTimeout, rpId, credentialIds, authenticationExtensionsClientInputs, parameters);
 
 		assertThat(instanceA).isEqualTo(instanceB);
 		assertThat(instanceA).hasSameHashCodeAs(instanceB);

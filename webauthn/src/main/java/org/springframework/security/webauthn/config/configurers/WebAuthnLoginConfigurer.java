@@ -206,6 +206,27 @@ public final class WebAuthnLoginConfigurer<H extends HttpSecurityBuilder<H>> ext
 		optionsProviderImpl.getRegistrationExtensions().putAll(registrationExtensionsConfig.extensionsClientInputs);
 		optionsProviderImpl.getAuthenticationExtensions().putAll(authenticationExtensionsConfig.extensionsClientInputs);
 
+		if (usernameParameter != null) {
+			optionsProviderImpl.setUsernameParameter(usernameParameter);
+		}
+		if (passwordParameter != null) {
+			optionsProviderImpl.setPasswordParameter(passwordParameter);
+		}
+		if (credentialIdParameter != null) {
+			optionsProviderImpl.setCredentialIdParameter(credentialIdParameter);
+		}
+		if (clientDataJSONParameter != null) {
+			optionsProviderImpl.setClientDataJSONParameter(clientDataJSONParameter);
+		}
+		if (authenticatorDataParameter != null) {
+			optionsProviderImpl.setAuthenticatorDataParameter(authenticatorDataParameter);
+		}
+		if (signatureParameter != null) {
+			optionsProviderImpl.setSignatureParameter(signatureParameter);
+		}
+		if (clientExtensionsJSONParameter != null) {
+			optionsProviderImpl.setClientExtensionsJSONParameter(clientExtensionsJSONParameter);
+		}
 	}
 
 	private void configureParameters() {

@@ -84,7 +84,8 @@ public class AssertionOptionsEndpointFilter extends OptionsEndpointFilterBase {
 				assertionOptions.getTimeout(),
 				assertionOptions.getRpId(),
 				credentials,
-				assertionOptions.getExtensions()
+				assertionOptions.getExtensions(),
+				assertionOptions.getParameters()
 		);
 	}
 }

@@ -122,7 +122,7 @@ public class WebAuthnLoginConfigurerSpringTest {
 		mvc
 				.perform(get("/webauthn/assertion/options").with(anonymous()))
 				.andExpect(unauthenticated())
-				.andExpect(content().json("{\"challenge\":\"aFglXMZdQTKD4krvNzJBzA\",\"timeout\":20000,\"rpId\":\"example.com\",\"allowCredentials\":[],\"extensions\":{\"appid\":\"\"}}"))
+				.andExpect(content().json("{\"challenge\":\"aFglXMZdQTKD4krvNzJBzA\",\"timeout\":20000,\"rpId\":\"example.com\",\"allowCredentials\":[],\"extensions\":{\"appid\":\"\"},\"parameters\":{\"username\":\"username\",\"password\":\"password\",\"credentialId\":\"credentialId\",\"clientDataJSON\":\"clientDataJSON\",\"authenticatorData\":\"authenticatorData\",\"signature\":\"signature\",\"clientExtensionsJSON\":\"clientExtensionsJSON\"}}"))
 				.andExpect(status().isOk());
 	}
 
@@ -149,7 +149,7 @@ public class WebAuthnLoginConfigurerSpringTest {
 		mvc
 				.perform(get("/webauthn/assertion/options").with(user("john")))
 				.andExpect(authenticated())
-				.andExpect(content().json("{\"challenge\":\"aFglXMZdQTKD4krvNzJBzA\",\"timeout\":20000,\"rpId\":\"example.com\",\"allowCredentials\":[{\"type\":\"public-key\",\"id\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"extensions\":{\"appid\":\"\"}}"))
+				.andExpect(content().json("{\"challenge\":\"aFglXMZdQTKD4krvNzJBzA\",\"timeout\":20000,\"rpId\":\"example.com\",\"allowCredentials\":[{\"type\":\"public-key\",\"id\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"extensions\":{\"appid\":\"\"},\"parameters\":{\"username\":\"username\",\"password\":\"password\",\"credentialId\":\"credentialId\",\"clientDataJSON\":\"clientDataJSON\",\"authenticatorData\":\"authenticatorData\",\"signature\":\"signature\",\"clientExtensionsJSON\":\"clientExtensionsJSON\"}}"))
 				.andExpect(status().isOk());
 	}
 

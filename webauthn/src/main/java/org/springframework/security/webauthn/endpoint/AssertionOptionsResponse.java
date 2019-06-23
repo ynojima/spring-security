@@ -37,6 +37,7 @@ public class AssertionOptionsResponse implements Serializable {
 	private String rpId;
 	private List<WebAuthnPublicKeyCredentialDescriptor> allowCredentials;
 	private AuthenticationExtensionsClientInputs extensions;
+	private Parameters parameters;
 
 	// ~ Constructors
 	// ===================================================================================================
@@ -46,12 +47,14 @@ public class AssertionOptionsResponse implements Serializable {
 			Long timeout,
 			String rpId,
 			List<WebAuthnPublicKeyCredentialDescriptor> allowCredentials,
-			AuthenticationExtensionsClientInputs extensions) {
+			AuthenticationExtensionsClientInputs extensions,
+			Parameters parameters) {
 		this.challenge = challenge;
 		this.timeout = timeout;
 		this.rpId = rpId;
 		this.allowCredentials = CollectionUtil.unmodifiableList(allowCredentials);
 		this.extensions = extensions;
+		this.parameters = parameters;
 	}
 
 	// ~ Methods
@@ -77,6 +80,10 @@ public class AssertionOptionsResponse implements Serializable {
 		return extensions;
 	}
 
+	public Parameters getParameters() {
+		return parameters;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -86,12 +93,13 @@ public class AssertionOptionsResponse implements Serializable {
 				Objects.equals(timeout, that.timeout) &&
 				Objects.equals(rpId, that.rpId) &&
 				Objects.equals(allowCredentials, that.allowCredentials) &&
-				Objects.equals(extensions, that.extensions);
+				Objects.equals(extensions, that.extensions) &&
+				Objects.equals(parameters, that.parameters);
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(challenge, timeout, rpId, allowCredentials, extensions);
+		return Objects.hash(challenge, timeout, rpId, allowCredentials, extensions, parameters);
 	}
 }

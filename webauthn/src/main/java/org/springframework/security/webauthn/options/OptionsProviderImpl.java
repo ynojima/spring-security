@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.webauthn.WebAuthnProcessingFilter;
 import org.springframework.security.webauthn.challenge.ChallengeRepository;
+import org.springframework.security.webauthn.endpoint.Parameters;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 import org.springframework.security.webauthn.util.ServletUtil;
@@ -55,6 +56,14 @@ public class OptionsProviderImpl implements OptionsProvider {
 	private Long authenticationTimeout = null;
 	private RegistrationExtensionsOptionProvider registrationExtensions = new RegistrationExtensionsOptionProvider();
 	private AuthenticationExtensionsOptionProvider authenticationExtensions = new AuthenticationExtensionsOptionProvider();
+
+	private String usernameParameter = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
+	private String passwordParameter = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY;
+	private String credentialIdParameter = WebAuthnProcessingFilter.SPRING_SECURITY_FORM_CREDENTIAL_ID_KEY;
+	private String clientDataJSONParameter = WebAuthnProcessingFilter.SPRING_SECURITY_FORM_CLIENT_DATA_JSON_KEY;
+	private String authenticatorDataParameter = WebAuthnProcessingFilter.SPRING_SECURITY_FORM_AUTHENTICATOR_DATA_KEY;
+	private String signatureParameter = WebAuthnProcessingFilter.SPRING_SECURITY_FORM_SIGNATURE_KEY;
+	private String clientExtensionsJSONParameter = WebAuthnProcessingFilter.SPRING_SECURITY_FORM_CLIENT_EXTENSIONS_JSON_KEY;
 
 	private WebAuthnUserDetailsService userDetailsService;
 	private ChallengeRepository challengeRepository;
@@ -138,8 +147,11 @@ public class OptionsProviderImpl implements OptionsProvider {
 		} else {
 			challengeRepository.saveChallenge(challenge, request);
 		}
+		Parameters parameters
+				= new Parameters(usernameParameter, passwordParameter,
+				credentialIdParameter, clientDataJSONParameter, authenticatorDataParameter, signatureParameter, clientExtensionsJSONParameter);
 
-		return new AssertionOptions(challenge, authenticationTimeout, effectiveRpId, credentials, authenticationExtensions.provide(request));
+		return new AssertionOptions(challenge, authenticationTimeout, effectiveRpId, credentials, authenticationExtensions.provide(request), parameters);
 	}
 
 
@@ -314,6 +326,69 @@ public class OptionsProviderImpl implements OptionsProvider {
 
 	public AuthenticationExtensionsOptionProvider getAuthenticationExtensions() {
 		return authenticationExtensions;
+	}
+
+	public String getUsernameParameter() {
+		return usernameParameter;
+	}
+
+	public void setUsernameParameter(String usernameParameter) {
+		Assert.hasText(usernameParameter, "usernameParameter must not be empty or null");
+		this.usernameParameter = usernameParameter;
+	}
+
+	public String getPasswordParameter() {
+		return passwordParameter;
+	}
+
+	public void setPasswordParameter(String passwordParameter) {
+		Assert.hasText(passwordParameter, "passwordParameter must not be empty or null");
+		this.passwordParameter = passwordParameter;
+	}
+
+	public String getCredentialIdParameter() {
+		return credentialIdParameter;
+	}
+
+	public void setCredentialIdParameter(String credentialIdParameter) {
+		Assert.hasText(credentialIdParameter, "credentialIdParameter must not be empty or null");
+		this.credentialIdParameter = credentialIdParameter;
+	}
+
+	public String getClientDataJSONParameter() {
+		return clientDataJSONParameter;
+	}
+
+	public void setClientDataJSONParameter(String clientDataJSONParameter) {
+		Assert.hasText(clientDataJSONParameter, "clientDataJSONParameter must not be empty or null");
+		this.clientDataJSONParameter = clientDataJSONParameter;
+	}
+
+	public String getAuthenticatorDataParameter() {
+		return authenticatorDataParameter;
+	}
+
+	public void setAuthenticatorDataParameter(String authenticatorDataParameter) {
+		Assert.hasText(authenticatorDataParameter, "authenticatorDataParameter must not be empty or null");
+		this.authenticatorDataParameter = authenticatorDataParameter;
+	}
+
+	public String getSignatureParameter() {
+		return signatureParameter;
+	}
+
+	public void setSignatureParameter(String signatureParameter) {
+		Assert.hasText(signatureParameter, "signatureParameter must not be empty or null");
+		this.signatureParameter = signatureParameter;
+	}
+
+	public String getClientExtensionsJSONParameter() {
+		return clientExtensionsJSONParameter;
+	}
+
+	public void setClientExtensionsJSONParameter(String clientExtensionsJSONParameter) {
+		Assert.hasText(clientExtensionsJSONParameter, "clientExtensionsJSONParameter must not be empty or null");
+		this.clientExtensionsJSONParameter = clientExtensionsJSONParameter;
 	}
 
 }
