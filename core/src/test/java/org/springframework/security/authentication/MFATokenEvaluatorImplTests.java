@@ -18,11 +18,8 @@ package org.springframework.security.authentication;
 
 import org.junit.Test;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.MFAUserDetails;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class MFATokenEvaluatorImplTests {
 
@@ -38,22 +35,6 @@ public class MFATokenEvaluatorImplTests {
 	}
 
 	@Test
-	public void testIsSingleFactorAuthenticationAllowedWithNonMFAUserDetailsPrincipal(){
-		MFATokenEvaluatorImpl mfaTokenEvaluator = new MFATokenEvaluatorImpl();
-		boolean result = mfaTokenEvaluator.isSingleFactorAuthenticationAllowed(new TestingAuthenticationToken("", ""));
-		assertThat(result).isFalse();
-	}
-
-	@Test
-	public void testIsSingleFactorAuthenticationAllowedWithMFAUserDetailsPrincipal(){
-		MFAUserDetails mfaUserDetails = mock(MFAUserDetails.class);
-		when(mfaUserDetails.isSingleFactorAuthenticationAllowed()).thenReturn(true);
-		MFATokenEvaluatorImpl mfaTokenEvaluator = new MFATokenEvaluatorImpl();
-		boolean result = mfaTokenEvaluator.isSingleFactorAuthenticationAllowed(new TestingAuthenticationToken(mfaUserDetails, ""));
-		assertThat(result).isTrue();
-	}
-
-	@Test
 	public void testGettersSetters() {
 		MFATokenEvaluatorImpl mfaTokenEvaluator = new MFATokenEvaluatorImpl();
 
@@ -62,10 +43,6 @@ public class MFATokenEvaluatorImplTests {
 		mfaTokenEvaluator.setMultiFactorClass(TestingAuthenticationToken.class);
 		assertThat(mfaTokenEvaluator.getMultiFactorClass()).isEqualTo(
 				TestingAuthenticationToken.class);
-
-		assertThat(mfaTokenEvaluator.isSingleFactorAuthenticationAllowed()).isTrue();
-		mfaTokenEvaluator.setSingleFactorAuthenticationAllowed(false);
-		assertThat(mfaTokenEvaluator.isSingleFactorAuthenticationAllowed()).isFalse();
 
 	}
 

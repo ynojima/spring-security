@@ -34,34 +34,25 @@ public class WebAuthnUserDetailsImpl extends User implements WebAuthnUserDetails
 
 	// ~ Instance fields
 	// ================================================================================================
-	private boolean singleFactorAuthenticationAllowed = false;
 	private byte[] userHandle;
 	private List<Authenticator> authenticators;
 
 	public WebAuthnUserDetailsImpl(
 			byte[] userHandle, String username, String password, List<Authenticator> authenticators,
 			Collection<? extends GrantedAuthority> authorities) {
-		this(userHandle, username, password, authenticators, false, authorities);
-	}
-
-	public WebAuthnUserDetailsImpl(
-			byte[] userHandle, String username, String password, List<Authenticator> authenticators,
-			boolean singleFactorAuthenticationAllowed, Collection<? extends GrantedAuthority> authorities) {
-		this(userHandle, username, password, authenticators, singleFactorAuthenticationAllowed,
+		this(userHandle, username, password, authenticators,
 				true, true, true, true,
 				authorities);
 	}
 
 	@SuppressWarnings("squid:S00107")
 	public WebAuthnUserDetailsImpl(
-			byte[] userHandle, String username, String password, List<Authenticator> authenticators,
-			boolean singleFactorAuthenticationAllowed, boolean enabled, boolean accountNonExpired,
+			byte[] userHandle, String username, String password, List<Authenticator> authenticators, boolean enabled, boolean accountNonExpired,
 			boolean credentialsNonExpired, boolean accountNonLocked,
 			Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
 		this.userHandle = userHandle;
 		this.authenticators = authenticators;
-		this.singleFactorAuthenticationAllowed = singleFactorAuthenticationAllowed;
 	}
 
 	@Override
@@ -74,15 +65,6 @@ public class WebAuthnUserDetailsImpl extends User implements WebAuthnUserDetails
 		return this.authenticators;
 	}
 
-	@Override
-	public boolean isSingleFactorAuthenticationAllowed() {
-		return singleFactorAuthenticationAllowed;
-	}
-
-	@Override
-	public void setSingleFactorAuthenticationAllowed(boolean singleFactorAuthenticationAllowed) {
-		this.singleFactorAuthenticationAllowed = singleFactorAuthenticationAllowed;
-	}
 
 
 }

@@ -37,15 +37,4 @@ public interface MFATokenEvaluator {
 	 */
 	boolean isMultiFactorAuthentication(Authentication authentication);
 
-	/**
-	 * Indicates whether the principal associated with the <code>Authentication</code>
-	 * token is allowed to login with only single factor.
-	 *
-	 * @param authentication to test (may be <code>null</code> in which case the method
-	 * will always return <code>false</code>)
-	 *
-	 * @return <code>true</code> the principal associated with thepassed authentication
-	 * token is allowed to login with only single factor, <code>false</code> otherwise
-	 */
-	boolean isSingleFactorAuthenticationAllowed(Authentication authentication);
 }

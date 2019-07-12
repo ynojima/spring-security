@@ -39,8 +39,6 @@ public class UserCreateForm {
 	@NotNull
 	private AuthenticatorCreateForm authenticator;
 
-	private boolean singleFactorAuthenticationAllowed;
-
 	public String getUserHandle() {
 		return userHandle;
 	}
@@ -73,12 +71,5 @@ public class UserCreateForm {
 		this.authenticator = authenticator;
 	}
 
-	public boolean isSingleFactorAuthenticationAllowed() {
-		return singleFactorAuthenticationAllowed;
-	}
-
-	public void setSingleFactorAuthenticationAllowed(boolean singleFactorAuthenticationAllowed) {
-		this.singleFactorAuthenticationAllowed = singleFactorAuthenticationAllowed;
-	}
 
 }

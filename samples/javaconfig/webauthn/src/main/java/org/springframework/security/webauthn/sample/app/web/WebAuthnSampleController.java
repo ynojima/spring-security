@@ -128,7 +128,6 @@ public class WebAuthnSampleController {
 
 		destination.setAuthenticators(authenticators);
 		destination.setLocked(false);
-		destination.setSingleFactorAuthenticationAllowed(userCreateForm.isSingleFactorAuthenticationAllowed());
 
 		UserEntity user = destination;
 		try {
