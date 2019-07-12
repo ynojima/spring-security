@@ -38,8 +38,6 @@ public class UserEntity implements WebAuthnUserDetails {
 
 	private boolean locked;
 
-	private boolean singleFactorAuthenticationAllowed;
-
 	public Integer getId() {
 		return id;
 	}
@@ -93,16 +91,6 @@ public class UserEntity implements WebAuthnUserDetails {
 
 	public void setLocked(boolean locked) {
 		this.locked = locked;
-	}
-
-	@Override
-	public boolean isSingleFactorAuthenticationAllowed() {
-		return singleFactorAuthenticationAllowed;
-	}
-
-	@Override
-	public void setSingleFactorAuthenticationAllowed(boolean singleFactorAuthenticationAllowed) {
-		this.singleFactorAuthenticationAllowed = singleFactorAuthenticationAllowed;
 	}
 
 	@Override

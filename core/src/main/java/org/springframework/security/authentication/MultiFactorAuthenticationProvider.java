@@ -65,10 +65,6 @@ public class MultiFactorAuthenticationProvider implements AuthenticationProvider
 
 		Authentication result = authenticationProvider.authenticate(authentication);
 
-		if (mfaTokenEvaluator.isSingleFactorAuthenticationAllowed(result)) {
-			return result;
-		}
-
 		return new MultiFactorAuthenticationToken(
 				result.getPrincipal(),
 				result.getCredentials(),
