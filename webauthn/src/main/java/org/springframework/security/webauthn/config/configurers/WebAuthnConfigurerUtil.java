@@ -23,12 +23,12 @@ import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
-import org.springframework.security.webauthn.challenge.HttpSessionChallengeRepository;
+import org.springframework.security.webauthn.challenge.HttpSessionWebAuthnChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.options.OptionsProvider;
 import org.springframework.security.webauthn.options.OptionsProviderImpl;
-import org.springframework.security.webauthn.server.ServerPropertyProvider;
-import org.springframework.security.webauthn.server.ServerPropertyProviderImpl;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProviderImpl;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 
 /**
@@ -39,16 +39,16 @@ public class WebAuthnConfigurerUtil {
 	private WebAuthnConfigurerUtil() {
 	}
 
-	static <H extends HttpSecurityBuilder<H>> ChallengeRepository getOrCreateChallengeRepository(H http) {
+	static <H extends HttpSecurityBuilder<H>> WebAuthnChallengeRepository getOrCreateChallengeRepository(H http) {
 		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		ChallengeRepository challengeRepository;
-		String[] beanNames = applicationContext.getBeanNamesForType(ChallengeRepository.class);
+		WebAuthnChallengeRepository webAuthnChallengeRepository;
+		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnChallengeRepository.class);
 		if (beanNames.length == 0) {
-			challengeRepository = new HttpSessionChallengeRepository();
+			webAuthnChallengeRepository = new HttpSessionWebAuthnChallengeRepository();
 		} else {
-			challengeRepository = applicationContext.getBean(ChallengeRepository.class);
+			webAuthnChallengeRepository = applicationContext.getBean(WebAuthnChallengeRepository.class);
 		}
-		return challengeRepository;
+		return webAuthnChallengeRepository;
 	}
 
 	public static <H extends HttpSecurityBuilder<H>> OptionsProvider getOrCreateOptionsProvider(H http) {
@@ -57,8 +57,8 @@ public class WebAuthnConfigurerUtil {
 		String[] beanNames = applicationContext.getBeanNamesForType(OptionsProvider.class);
 		if (beanNames.length == 0) {
 			WebAuthnUserDetailsService userDetailsService = getWebAuthnUserDetailsService(http);
-			ChallengeRepository challengeRepository = getOrCreateChallengeRepository(http);
-			optionsProvider = new OptionsProviderImpl(userDetailsService, challengeRepository);
+			WebAuthnChallengeRepository webAuthnChallengeRepository = getOrCreateChallengeRepository(http);
+			optionsProvider = new OptionsProviderImpl(userDetailsService, webAuthnChallengeRepository);
 		} else {
 			optionsProvider = applicationContext.getBean(OptionsProvider.class);
 		}
@@ -80,16 +80,16 @@ public class WebAuthnConfigurerUtil {
 		return jsonConverter;
 	}
 
-	public static <H extends HttpSecurityBuilder<H>> ServerPropertyProvider getOrCreateServerPropertyProvider(H http) {
+	public static <H extends HttpSecurityBuilder<H>> WebAuthnServerPropertyProvider getOrCreateServerPropertyProvider(H http) {
 		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		ServerPropertyProvider serverPropertyProvider;
-		String[] beanNames = applicationContext.getBeanNamesForType(ServerPropertyProvider.class);
+		WebAuthnServerPropertyProvider webAuthnServerPropertyProvider;
+		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnServerPropertyProvider.class);
 		if (beanNames.length == 0) {
-			serverPropertyProvider = new ServerPropertyProviderImpl(getOrCreateOptionsProvider(http), getOrCreateChallengeRepository(http));
+			webAuthnServerPropertyProvider = new WebAuthnServerPropertyProviderImpl(getOrCreateOptionsProvider(http), getOrCreateChallengeRepository(http));
 		} else {
-			serverPropertyProvider = applicationContext.getBean(ServerPropertyProvider.class);
+			webAuthnServerPropertyProvider = applicationContext.getBean(WebAuthnServerPropertyProvider.class);
 		}
-		return serverPropertyProvider;
+		return webAuthnServerPropertyProvider;
 	}
 
 	public static <H extends HttpSecurityBuilder<H>> WebAuthnUserDetailsService getWebAuthnUserDetailsService(H http) {

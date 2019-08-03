@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidationResponse;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
-import org.springframework.security.webauthn.server.ServerPropertyProvider;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 
 import java.util.Collections;
 import java.util.Set;
@@ -51,15 +51,15 @@ public class RegistrationValidationTest {
 	private Origin origin = new Origin("http://localhost");
 	private WebAuthnAuthenticatorAdaptor webAuthnModelAuthenticatorAdaptor = new WebAuthnAuthenticatorAdaptor(new PackedAuthenticator());
 	private ClientPlatform clientPlatform = new ClientPlatform(origin, webAuthnModelAuthenticatorAdaptor);
-	private ServerPropertyProvider serverPropertyProvider = mock(ServerPropertyProvider.class);
+	private WebAuthnServerPropertyProvider webAuthnServerPropertyProvider = mock(WebAuthnServerPropertyProvider.class);
 	private WebAuthnRegistrationRequestValidator target = new WebAuthnRegistrationRequestValidator(
-			WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator(), serverPropertyProvider
+			WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator(), webAuthnServerPropertyProvider
 	);
 
 	@Test
 	public void validate_test() {
 		ServerProperty serverProperty = new ServerProperty(origin, rpId, challenge, null);
-		when(serverPropertyProvider.provide(any())).thenReturn(serverProperty);
+		when(webAuthnServerPropertyProvider.provide(any())).thenReturn(serverProperty);
 
 
 		AuthenticatorSelectionCriteria authenticatorSelectionCriteria =

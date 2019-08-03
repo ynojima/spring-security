@@ -18,9 +18,9 @@ package org.springframework.security.webauthn.options;
 
 
 import com.webauthn4j.data.*;
-import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.extension.client.AuthenticationExtensionsClientInputs;
 import com.webauthn4j.util.CollectionUtil;
+import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
 
 import java.io.Serializable;
 import java.util.List;
@@ -37,7 +37,7 @@ public class AttestationOptions implements Serializable {
 
 	private PublicKeyCredentialRpEntity rp;
 	private PublicKeyCredentialUserEntity user;
-	private Challenge challenge;
+	private WebAuthnChallenge challenge;
 	private List<PublicKeyCredentialParameters> pubKeyCredParams;
 	private Long timeout;
 	private List<PublicKeyCredentialDescriptor> excludeCredentials;
@@ -51,7 +51,7 @@ public class AttestationOptions implements Serializable {
 	public AttestationOptions(
 			PublicKeyCredentialRpEntity rp,
 			PublicKeyCredentialUserEntity user,
-			Challenge challenge,
+			WebAuthnChallenge challenge,
 			List<PublicKeyCredentialParameters> pubKeyCredParams,
 			Long timeout,
 			List<PublicKeyCredentialDescriptor> excludeCredentials,
@@ -89,11 +89,11 @@ public class AttestationOptions implements Serializable {
 	}
 
 	/**
-	 * Returns {@link Challenge}
+	 * Returns {@link WebAuthnChallenge}
 	 *
-	 * @return {@link Challenge}
+	 * @return {@link WebAuthnChallenge}
 	 */
-	public Challenge getChallenge() {
+	public WebAuthnChallenge getChallenge() {
 		return challenge;
 	}
 

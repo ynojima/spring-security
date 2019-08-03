@@ -16,12 +16,9 @@
 
 package org.springframework.security.webauthn.server;
 
-import com.webauthn4j.data.client.Origin;
-import com.webauthn4j.data.client.challenge.Challenge;
-import com.webauthn4j.server.ServerProperty;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.options.OptionsProvider;
-import org.springframework.security.webauthn.util.ServletUtil;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,29 +26,29 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * {@inheritDoc}
  */
-public class ServerPropertyProviderImpl implements ServerPropertyProvider {
+public class WebAuthnServerPropertyProviderImpl implements WebAuthnServerPropertyProvider {
 
 	//~ Instance fields
 	// ================================================================================================
 	private OptionsProvider optionsProvider;
-	private ChallengeRepository challengeRepository;
+	private WebAuthnChallengeRepository webAuthnChallengeRepository;
 
-	public ServerPropertyProviderImpl(OptionsProvider optionsProvider, ChallengeRepository challengeRepository) {
+	public WebAuthnServerPropertyProviderImpl(OptionsProvider optionsProvider, WebAuthnChallengeRepository webAuthnChallengeRepository) {
 
 		Assert.notNull(optionsProvider, "optionsProvider must not be null");
-		Assert.notNull(challengeRepository, "challengeRepository must not be null");
+		Assert.notNull(webAuthnChallengeRepository, "webAuthnChallengeRepository must not be null");
 
 		this.optionsProvider = optionsProvider;
-		this.challengeRepository = challengeRepository;
+		this.webAuthnChallengeRepository = webAuthnChallengeRepository;
 	}
 
-	public ServerProperty provide(HttpServletRequest request) {
+	public WebAuthnServerProperty provide(HttpServletRequest request) {
 
-		Origin origin = ServletUtil.getOrigin(request);
+		WebAuthnOrigin origin = WebAuthnOrigin.create(request);
 		String effectiveRpId = optionsProvider.getEffectiveRpId(request);
-		Challenge challenge = challengeRepository.loadOrGenerateChallenge(request);
+		WebAuthnChallenge challenge = webAuthnChallengeRepository.loadOrGenerateChallenge(request);
 
-		return new ServerProperty(origin, effectiveRpId, challenge, null); // tokenBinding is not supported by Servlet API as of 4.0
+		return new WebAuthnServerProperty(origin, effectiveRpId, challenge, null); // tokenBinding is not supported by Servlet API as of 4.0
 	}
 
 

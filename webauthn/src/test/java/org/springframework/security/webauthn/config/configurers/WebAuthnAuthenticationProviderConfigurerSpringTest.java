@@ -30,12 +30,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.webauthn.WebAuthnAuthenticationProvider;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticatorService;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
-import org.springframework.security.webauthn.challenge.HttpSessionChallengeRepository;
+import org.springframework.security.webauthn.challenge.HttpSessionWebAuthnChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.options.OptionsProvider;
 import org.springframework.security.webauthn.options.OptionsProviderImpl;
-import org.springframework.security.webauthn.server.ServerPropertyProvider;
-import org.springframework.security.webauthn.server.ServerPropertyProviderImpl;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProviderImpl;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -77,20 +77,20 @@ public class WebAuthnAuthenticationProviderConfigurerSpringTest {
 			}
 
 			@Bean
-			public ChallengeRepository challengeRepository() {
-				return new HttpSessionChallengeRepository();
+			public WebAuthnChallengeRepository challengeRepository() {
+				return new HttpSessionWebAuthnChallengeRepository();
 			}
 
 			@Bean
-			public OptionsProvider optionsProvider(WebAuthnUserDetailsService webAuthnUserDetailsService, ChallengeRepository challengeRepository) {
-				OptionsProviderImpl optionsProviderImpl = new OptionsProviderImpl(webAuthnUserDetailsService, challengeRepository);
+			public OptionsProvider optionsProvider(WebAuthnUserDetailsService webAuthnUserDetailsService, WebAuthnChallengeRepository webAuthnChallengeRepository) {
+				OptionsProviderImpl optionsProviderImpl = new OptionsProviderImpl(webAuthnUserDetailsService, webAuthnChallengeRepository);
 				optionsProviderImpl.setRpId("example.com");
 				return optionsProviderImpl;
 			}
 
 			@Bean
-			public ServerPropertyProvider serverPropertyProvider(OptionsProvider optionsProvider, ChallengeRepository challengeRepository) {
-				return new ServerPropertyProviderImpl(optionsProvider, challengeRepository);
+			public WebAuthnServerPropertyProvider serverPropertyProvider(OptionsProvider optionsProvider, WebAuthnChallengeRepository webAuthnChallengeRepository) {
+				return new WebAuthnServerPropertyProviderImpl(optionsProvider, webAuthnChallengeRepository);
 			}
 
 

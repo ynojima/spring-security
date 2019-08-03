@@ -26,11 +26,11 @@ import javax.servlet.http.HttpSession;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Test for HttpSessionChallengeRepository
+ * Test for HttpSessionWebAuthnChallengeRepository
  */
-public class HttpSessionChallengeRepositoryTest {
+public class HttpSessionWebAuthnChallengeRepositoryTest {
 
-	private HttpSessionChallengeRepository target = new HttpSessionChallengeRepository();
+	private HttpSessionWebAuthnChallengeRepository target = new HttpSessionWebAuthnChallengeRepository();
 
 	@Test
 	public void generateChallenge_test() {

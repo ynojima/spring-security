@@ -16,12 +16,7 @@
 
 package org.springframework.security.webauthn.authenticator;
 
-import com.webauthn4j.authenticator.AuthenticatorImpl;
-import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData;
-import com.webauthn4j.data.attestation.statement.AttestationStatement;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
-
-import java.util.Objects;
 
 /**
  * Models core authenticator information retrieved by a {@link WebAuthnUserDetailsService}
@@ -29,57 +24,18 @@ import java.util.Objects;
  * @author Yoshikazu Nojima
  * @see WebAuthnUserDetailsService
  */
-public class WebAuthnAuthenticator extends AuthenticatorImpl {
+public interface WebAuthnAuthenticator {
 
-	// ~ Instance fields
-	// ================================================================================================
-	private String name;
+	String getName();
 
-	// ~ Constructor
-	// ========================================================================================================
+	void setName(String name);
 
-	/**
-	 * Constructor
-	 *
-	 * @param name                   authenticator's friendly name
-	 * @param attestedCredentialData attested credential data
-	 * @param attestationStatement   attestation statement
-	 * @param counter                counter
-	 */
-	public WebAuthnAuthenticator(String name, AttestedCredentialData attestedCredentialData, AttestationStatement attestationStatement, long counter) {
-		super(attestedCredentialData, attestationStatement, counter);
-		this.setName(name);
-	}
+	byte[] getAttestedCredentialData();
 
-	// ~ Methods
-	// ========================================================================================================
+	void setAttestedCredentialData(byte[] attestedCredentialData);
 
-	public String getName() {
-		return name;
-	}
+	byte[] getAttestationStatement();
 
-	public void setName(String name) {
-		this.name = name;
-	}
+	void setAttestationStatement(byte[] attestationStatement);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
-		WebAuthnAuthenticator that = (WebAuthnAuthenticator) o;
-		return Objects.equals(name, that.name);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-
-		return Objects.hash(super.hashCode(), name);
-	}
 }

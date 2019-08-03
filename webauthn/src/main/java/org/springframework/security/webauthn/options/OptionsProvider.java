@@ -16,12 +16,12 @@
 
 package org.springframework.security.webauthn.options;
 
-import com.webauthn4j.data.client.challenge.Challenge;
+import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Provides {@link Options} and effective rpId for {@link HttpServletRequest}
+ * Provides Options and effective rpId for {@link HttpServletRequest}
  *
  * @author Yoshikazu Nojima
  */
@@ -35,7 +35,7 @@ public interface OptionsProvider {
 	 * @param challenge if null, new challenge is generated. Otherwise, specified challenge is used.
 	 * @return {@link AttestationOptions} instance
 	 */
-	AttestationOptions getAttestationOptions(HttpServletRequest request, String username, Challenge challenge);
+	AttestationOptions getAttestationOptions(HttpServletRequest request, String username, WebAuthnChallenge challenge);
 
 	/**
 	 * provides {@link AssertionOptions}. If <code>username</code> is <code>null</code>, <code>credentials</code> are not populated.
@@ -45,7 +45,7 @@ public interface OptionsProvider {
 	 * @param challenge if null, new challenge is generated. Otherwise, specified challenge is used.
 	 * @return {@link AssertionOptions} instance
 	 */
-	AssertionOptions getAssertionOptions(HttpServletRequest request, String username, Challenge challenge);
+	AssertionOptions getAssertionOptions(HttpServletRequest request, String username, WebAuthnChallenge challenge);
 
 	/**
 	 * returns effective rpId based on request origin and configured <code>rpId</code>.

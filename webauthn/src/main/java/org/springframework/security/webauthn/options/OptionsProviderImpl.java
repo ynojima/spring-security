@@ -18,13 +18,12 @@ package org.springframework.security.webauthn.options;
 
 import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.data.*;
-import com.webauthn4j.data.client.Origin;
-import com.webauthn4j.data.client.challenge.Challenge;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
+import org.springframework.security.webauthn.server.WebAuthnOrigin;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
-import org.springframework.security.webauthn.util.ServletUtil;
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,18 +54,18 @@ public class OptionsProviderImpl implements OptionsProvider {
 	private AuthenticationExtensionsOptionProvider authenticationExtensions = new AuthenticationExtensionsOptionProvider();
 
 	private WebAuthnUserDetailsService userDetailsService;
-	private ChallengeRepository challengeRepository;
+	private WebAuthnChallengeRepository webAuthnChallengeRepository;
 
 	// ~ Constructors
 	// ===================================================================================================
 
-	public OptionsProviderImpl(WebAuthnUserDetailsService userDetailsService, ChallengeRepository challengeRepository) {
+	public OptionsProviderImpl(WebAuthnUserDetailsService userDetailsService, WebAuthnChallengeRepository webAuthnChallengeRepository) {
 
 		Assert.notNull(userDetailsService, "userDetailsService must not be null");
-		Assert.notNull(challengeRepository, "challengeRepository must not be null");
+		Assert.notNull(webAuthnChallengeRepository, "webAuthnChallengeRepository must not be null");
 
 		this.userDetailsService = userDetailsService;
-		this.challengeRepository = challengeRepository;
+		this.webAuthnChallengeRepository = webAuthnChallengeRepository;
 	}
 
 
@@ -78,7 +77,7 @@ public class OptionsProviderImpl implements OptionsProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AttestationOptions getAttestationOptions(HttpServletRequest request, String username, Challenge challenge) {
+	public AttestationOptions getAttestationOptions(HttpServletRequest request, String username, WebAuthnChallenge challenge) {
 
 		PublicKeyCredentialUserEntity user;
 		Collection<? extends Authenticator> authenticators;
@@ -102,16 +101,16 @@ public class OptionsProviderImpl implements OptionsProvider {
 
 		PublicKeyCredentialRpEntity relyingParty = new PublicKeyCredentialRpEntity(getEffectiveRpId(request), rpName, rpIcon);
 		if (challenge == null) {
-			challenge = challengeRepository.loadOrGenerateChallenge(request);
+			challenge = webAuthnChallengeRepository.loadOrGenerateChallenge(request);
 		} else {
-			challengeRepository.saveChallenge(challenge, request);
+			webAuthnChallengeRepository.saveChallenge(challenge, request);
 		}
 
 		return new AttestationOptions(relyingParty, user, challenge, pubKeyCredParams, registrationTimeout,
 				credentials, authenticatorSelection, attestation, registrationExtensions.provide(request));
 	}
 
-	public AssertionOptions getAssertionOptions(HttpServletRequest request, String username, Challenge challenge) {
+	public AssertionOptions getAssertionOptions(HttpServletRequest request, String username, WebAuthnChallenge challenge) {
 
 		Collection<? extends Authenticator> authenticators;
 		try {
@@ -132,9 +131,9 @@ public class OptionsProviderImpl implements OptionsProvider {
 				.collect(Collectors.toList());
 
 		if (challenge == null) {
-			challenge = challengeRepository.loadOrGenerateChallenge(request);
+			challenge = webAuthnChallengeRepository.loadOrGenerateChallenge(request);
 		} else {
-			challengeRepository.saveChallenge(challenge, request);
+			webAuthnChallengeRepository.saveChallenge(challenge, request);
 		}
 
 		return new AssertionOptions(challenge, authenticationTimeout, effectiveRpId, credentials, authenticationExtensions.provide(request));
@@ -152,8 +151,8 @@ public class OptionsProviderImpl implements OptionsProvider {
 		if (this.rpId != null) {
 			effectiveRpId = this.rpId;
 		} else {
-			Origin origin = ServletUtil.getOrigin(request);
-			effectiveRpId = origin.getHost();
+			WebAuthnOrigin webAuthnOrigin = WebAuthnOrigin.create(request);
+			effectiveRpId = webAuthnOrigin.getHost();
 		}
 		return effectiveRpId;
 	}

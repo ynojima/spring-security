@@ -25,28 +25,28 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
-import org.springframework.security.webauthn.challenge.HttpSessionChallengeRepository;
+import org.springframework.security.webauthn.challenge.HttpSessionWebAuthnChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.options.OptionsProvider;
 import org.springframework.security.webauthn.options.OptionsProviderImpl;
-import org.springframework.security.webauthn.server.ServerPropertyProvider;
-import org.springframework.security.webauthn.server.ServerPropertyProviderImpl;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProviderImpl;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 
 @Configuration
 public class WebSecurityBeanConfig {
 
 	@Bean
-	public WebAuthnRegistrationRequestValidator webAuthnRegistrationRequestValidator(ServerPropertyProvider serverPropertyProvider) {
+	public WebAuthnRegistrationRequestValidator webAuthnRegistrationRequestValidator(WebAuthnServerPropertyProvider webAuthnServerPropertyProvider) {
 		WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator = WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator();
-		return new WebAuthnRegistrationRequestValidator(webAuthnRegistrationContextValidator, serverPropertyProvider);
+		return new WebAuthnRegistrationRequestValidator(webAuthnRegistrationContextValidator, webAuthnServerPropertyProvider);
 	}
 
 	@Bean
-	public ServerPropertyProvider serverPropertyProvider(WebAuthnUserDetailsService webAuthnUserDetailsService) {
-		ChallengeRepository challengeRepository = new HttpSessionChallengeRepository();
-		OptionsProvider optionsProvider = new OptionsProviderImpl(webAuthnUserDetailsService, challengeRepository);
-		return new ServerPropertyProviderImpl(optionsProvider, challengeRepository);
+	public WebAuthnServerPropertyProvider serverPropertyProvider(WebAuthnUserDetailsService webAuthnUserDetailsService) {
+		WebAuthnChallengeRepository webAuthnChallengeRepository = new HttpSessionWebAuthnChallengeRepository();
+		OptionsProvider optionsProvider = new OptionsProviderImpl(webAuthnUserDetailsService, webAuthnChallengeRepository);
+		return new WebAuthnServerPropertyProviderImpl(optionsProvider, webAuthnChallengeRepository);
 	}
 
 	@Bean

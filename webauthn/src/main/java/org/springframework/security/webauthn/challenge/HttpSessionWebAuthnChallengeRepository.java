@@ -17,7 +17,6 @@
 package org.springframework.security.webauthn.challenge;
 
 import com.webauthn4j.data.client.challenge.Challenge;
-import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.util.Assert;
 
@@ -25,18 +24,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * A {@link ChallengeRepository} implementation that stores data to HTTP session
+ * A {@link WebAuthnChallengeRepository} implementation that stores data to HTTP session
  * <p>
  * Class design is based on {@link HttpSessionCsrfTokenRepository}
  *
  * @author Yoshikazu Nojima
  */
-public class HttpSessionChallengeRepository implements ChallengeRepository {
+public class HttpSessionWebAuthnChallengeRepository implements WebAuthnChallengeRepository {
 
 	// ~ Static fields/initializers
 	// =====================================================================================
 
-	private static final String DEFAULT_CHALLENGE_ATTR_NAME = HttpSessionChallengeRepository.class
+	private static final String DEFAULT_CHALLENGE_ATTR_NAME = HttpSessionWebAuthnChallengeRepository.class
 			.getName().concat(".CHALLENGE");
 
 	//~ Instance fields
@@ -47,12 +46,12 @@ public class HttpSessionChallengeRepository implements ChallengeRepository {
 	// ========================================================================================================
 
 	@Override
-	public Challenge generateChallenge() {
-		return new DefaultChallenge();
+	public WebAuthnChallenge generateChallenge() {
+		return new WebAuthnChallengeImpl();
 	}
 
 	@Override
-	public void saveChallenge(Challenge challenge, HttpServletRequest request) {
+	public void saveChallenge(WebAuthnChallenge challenge, HttpServletRequest request) {
 		if (challenge == null) {
 			HttpSession session = request.getSession(false);
 			if (session != null) {
@@ -65,12 +64,12 @@ public class HttpSessionChallengeRepository implements ChallengeRepository {
 	}
 
 	@Override
-	public Challenge loadChallenge(HttpServletRequest request) {
+	public WebAuthnChallenge loadChallenge(HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
 		if (session == null) {
 			return null;
 		}
-		return (Challenge) session.getAttribute(this.sessionAttributeName);
+		return (WebAuthnChallenge) session.getAttribute(this.sessionAttributeName);
 	}
 
 	/**

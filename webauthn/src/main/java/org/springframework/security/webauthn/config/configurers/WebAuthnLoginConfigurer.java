@@ -36,14 +36,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.webauthn.WebAuthnProcessingFilter;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.endpoint.AssertionOptionsEndpointFilter;
 import org.springframework.security.webauthn.endpoint.AttestationOptionsEndpointFilter;
 import org.springframework.security.webauthn.options.ExtensionOptionProvider;
 import org.springframework.security.webauthn.options.OptionsProvider;
 import org.springframework.security.webauthn.options.OptionsProviderImpl;
 import org.springframework.security.webauthn.options.StaticExtensionOptionProvider;
-import org.springframework.security.webauthn.server.ServerPropertyProvider;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -71,9 +71,9 @@ import java.util.Map;
  * <p>
  * The following shared objects are populated
  * <ul>
- * <li>{@link ChallengeRepository}</li>
+ * <li>{@link WebAuthnChallengeRepository}</li>
  * <li>{@link OptionsProvider}</li>
- * <li>{@link ServerPropertyProvider}</li>
+ * <li>{@link WebAuthnServerPropertyProvider}</li>
  * </ul>
  *
  * <h2>Shared Objects Used</h2>
@@ -106,7 +106,7 @@ public final class WebAuthnLoginConfigurer<H extends HttpSecurityBuilder<H>> ext
 	// ================================================================================================
 	private OptionsProvider optionsProvider = null;
 	private JsonConverter jsonConverter = null;
-	private ServerPropertyProvider serverPropertyProvider = null;
+	private WebAuthnServerPropertyProvider webAuthnServerPropertyProvider = null;
 	private WebAuthnRegistrationRequestValidator webAuthnRegistrationRequestValidator;
 	private String rpId = null;
 	private String rpName = null;
@@ -152,10 +152,10 @@ public final class WebAuthnLoginConfigurer<H extends HttpSecurityBuilder<H>> ext
 		}
 		http.setSharedObject(OptionsProvider.class, optionsProvider);
 
-		if (serverPropertyProvider == null) {
-			serverPropertyProvider = WebAuthnConfigurerUtil.getOrCreateServerPropertyProvider(http);
+		if (webAuthnServerPropertyProvider == null) {
+			webAuthnServerPropertyProvider = WebAuthnConfigurerUtil.getOrCreateServerPropertyProvider(http);
 		}
-		http.setSharedObject(ServerPropertyProvider.class, serverPropertyProvider);
+		http.setSharedObject(WebAuthnServerPropertyProvider.class, webAuthnServerPropertyProvider);
 
 		if (webAuthnRegistrationRequestValidator == null) {
 			webAuthnRegistrationRequestValidator = WebAuthnConfigurerUtil.getOrCreateWebAuthnRegistrationRequestValidator(http);
@@ -171,7 +171,7 @@ public final class WebAuthnLoginConfigurer<H extends HttpSecurityBuilder<H>> ext
 		super.configure(http);
 		configureParameters();
 
-		this.getAuthenticationFilter().setServerPropertyProvider(serverPropertyProvider);
+		this.getAuthenticationFilter().setServerPropertyProvider(webAuthnServerPropertyProvider);
 
 		this.attestationOptionsEndpointConfig.configure(http);
 		this.assertionOptionsEndpointConfig.configure(http);
@@ -257,14 +257,14 @@ public final class WebAuthnLoginConfigurer<H extends HttpSecurityBuilder<H>> ext
 	}
 
 	/**
-	 * Specifies the {@link ServerPropertyProvider} to be used.
+	 * Specifies the {@link WebAuthnServerPropertyProvider} to be used.
 	 *
-	 * @param serverPropertyProvider the {@link ServerPropertyProvider}
+	 * @param webAuthnServerPropertyProvider the {@link WebAuthnServerPropertyProvider}
 	 * @return the {@link WebAuthnLoginConfigurer} for additional customization
 	 */
-	public WebAuthnLoginConfigurer<H> serverPropertyProvider(ServerPropertyProvider serverPropertyProvider) {
-		Assert.notNull(serverPropertyProvider, "serverPropertyProvider must not be null");
-		this.serverPropertyProvider = serverPropertyProvider;
+	public WebAuthnLoginConfigurer<H> serverPropertyProvider(WebAuthnServerPropertyProvider webAuthnServerPropertyProvider) {
+		Assert.notNull(webAuthnServerPropertyProvider, "webAuthnServerPropertyProvider must not be null");
+		this.webAuthnServerPropertyProvider = webAuthnServerPropertyProvider;
 		return this;
 	}
 

@@ -32,11 +32,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.webauthn.WebAuthnProcessingFilter;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.options.OptionsProvider;
 import org.springframework.security.webauthn.options.OptionsProviderImpl;
-import org.springframework.security.webauthn.server.ServerPropertyProvider;
-import org.springframework.security.webauthn.server.ServerPropertyProviderImpl;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProviderImpl;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -63,7 +63,7 @@ public class WebAuthnLoginConfigurerSetterSpringTest {
 	private WebAuthnUserDetailsService webAuthnUserDetailsService;
 
 	@Autowired
-	private ServerPropertyProvider serverPropertyProvider;
+	private WebAuthnServerPropertyProvider webAuthnServerPropertyProvider;
 
 	@SuppressWarnings("unchecked")
 	@Before
@@ -79,7 +79,7 @@ public class WebAuthnLoginConfigurerSetterSpringTest {
 	@Test
 	public void configured_filter_test() {
 		WebAuthnProcessingFilter webAuthnProcessingFilter = (WebAuthnProcessingFilter) springSecurityFilterChain.getFilterChains().get(0).getFilters().stream().filter(item -> item instanceof WebAuthnProcessingFilter).findFirst().orElse(null);
-		assertThat(webAuthnProcessingFilter.getServerPropertyProvider()).isEqualTo(serverPropertyProvider);
+		assertThat(webAuthnProcessingFilter.getServerPropertyProvider()).isEqualTo(webAuthnServerPropertyProvider);
 	}
 
 	@EnableWebSecurity
@@ -111,22 +111,22 @@ public class WebAuthnLoginConfigurerSetterSpringTest {
 			}
 
 			@Bean
-			public ChallengeRepository challengeRepository() {
-				ChallengeRepository challengeRepository = mock(ChallengeRepository.class);
-				when(challengeRepository.loadOrGenerateChallenge(any())).thenReturn(new DefaultChallenge("aFglXMZdQTKD4krvNzJBzA"));
-				return challengeRepository;
+			public WebAuthnChallengeRepository challengeRepository() {
+				WebAuthnChallengeRepository webAuthnChallengeRepository = mock(WebAuthnChallengeRepository.class);
+				when(webAuthnChallengeRepository.loadOrGenerateChallenge(any())).thenReturn(new DefaultChallenge("aFglXMZdQTKD4krvNzJBzA"));
+				return webAuthnChallengeRepository;
 			}
 
 			@Bean
-			public OptionsProvider optionsProvider(WebAuthnUserDetailsService webAuthnUserDetailsService, ChallengeRepository challengeRepository) {
-				OptionsProviderImpl optionsProviderImpl = new OptionsProviderImpl(webAuthnUserDetailsService, challengeRepository);
+			public OptionsProvider optionsProvider(WebAuthnUserDetailsService webAuthnUserDetailsService, WebAuthnChallengeRepository webAuthnChallengeRepository) {
+				OptionsProviderImpl optionsProviderImpl = new OptionsProviderImpl(webAuthnUserDetailsService, webAuthnChallengeRepository);
 				optionsProviderImpl.setRpId("example.com");
 				return optionsProviderImpl;
 			}
 
 			@Bean
-			public ServerPropertyProvider serverPropertyProvider(OptionsProvider optionsProvider, ChallengeRepository challengeRepository) {
-				return new ServerPropertyProviderImpl(optionsProvider, challengeRepository);
+			public WebAuthnServerPropertyProvider serverPropertyProvider(OptionsProvider optionsProvider, WebAuthnChallengeRepository webAuthnChallengeRepository) {
+				return new WebAuthnServerPropertyProviderImpl(optionsProvider, webAuthnChallengeRepository);
 			}
 
 		}

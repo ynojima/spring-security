@@ -16,8 +16,8 @@
 
 package org.springframework.security.webauthn.request;
 
-import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.util.ArrayUtil;
+import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class WebAuthnAuthenticationRequest implements Serializable {
 	private final byte[] authenticatorData;
 	private final byte[] signature;
 	private final String clientExtensionsJSON;
-	private final ServerProperty serverProperty;
+	private final WebAuthnServerProperty serverProperty;
 	private final boolean userVerificationRequired;
 	private final boolean userPresenceRequired;
 	private List<String> expectedAuthenticationExtensionIds;
@@ -52,7 +52,7 @@ public class WebAuthnAuthenticationRequest implements Serializable {
 			byte[] authenticatorData,
 			byte[] signature,
 			String clientExtensionsJSON,
-			ServerProperty serverProperty,
+			WebAuthnServerProperty serverProperty,
 			boolean userVerificationRequired,
 			boolean userPresenceRequired,
 			List<String> expectedAuthenticationExtensionIds) {
@@ -75,7 +75,7 @@ public class WebAuthnAuthenticationRequest implements Serializable {
 			byte[] authenticatorData,
 			byte[] signature,
 			String clientExtensionsJSON,
-			ServerProperty serverProperty,
+			WebAuthnServerProperty serverProperty,
 			boolean userVerificationRequired,
 			List<String> expectedAuthenticationExtensionIds) {
 
@@ -112,7 +112,7 @@ public class WebAuthnAuthenticationRequest implements Serializable {
 		return clientExtensionsJSON;
 	}
 
-	public ServerProperty getServerProperty() {
+	public WebAuthnServerProperty getServerProperty() {
 		return serverProperty;
 	}
 

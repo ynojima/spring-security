@@ -18,6 +18,7 @@ package org.springframework.security.webauthn;
 
 import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.data.WebAuthnAuthenticationContext;
+import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.util.exception.WebAuthnException;
 import com.webauthn4j.validator.WebAuthnAuthenticationContextValidator;
 import org.apache.commons.logging.Log;
@@ -37,6 +38,7 @@ import org.springframework.security.webauthn.request.WebAuthnAuthenticationReque
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 import org.springframework.security.webauthn.util.ExceptionUtil;
+import org.springframework.security.webauthn.util.WebAuthn4JUtil;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
@@ -148,13 +150,15 @@ public class WebAuthnAuthenticationProvider implements AuthenticationProvider {
 
 		boolean userVerificationRequired = isUserVerificationRequired(user, credentials);
 
+		ServerProperty serverProperty = WebAuthn4JUtil.convertToServerProperty(credentials.getServerProperty());
+
 		WebAuthnAuthenticationContext authenticationContext = new WebAuthnAuthenticationContext(
 				credentials.getCredentialId(),
 				credentials.getClientDataJSON(),
 				credentials.getAuthenticatorData(),
 				credentials.getSignature(),
 				credentials.getClientExtensionsJSON(),
-				credentials.getServerProperty(),
+				serverProperty,
 				userVerificationRequired,
 				credentials.isUserPresenceRequired(),
 				credentials.getExpectedAuthenticationExtensionIds()

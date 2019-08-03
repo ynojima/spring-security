@@ -26,14 +26,14 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Yoshikazu Nojima
  */
-public interface ServerPropertyProvider {
+public interface WebAuthnServerPropertyProvider {
 
 	/**
-	 * Provides {@link ServerProperty}
+	 * Provides {@link WebAuthnServerProperty}
 	 *
 	 * @param request http servlet request
-	 * @return the {@link ServerProperty}
+	 * @return the {@link WebAuthnServerProperty}
 	 */
-	ServerProperty provide(HttpServletRequest request);
+	WebAuthnServerProperty provide(HttpServletRequest request);
 
 }

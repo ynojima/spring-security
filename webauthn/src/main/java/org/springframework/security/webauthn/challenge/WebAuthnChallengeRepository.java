@@ -16,54 +16,53 @@
 
 package org.springframework.security.webauthn.challenge;
 
-import com.webauthn4j.data.client.challenge.Challenge;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * An API to allow changing the method in which the expected {@link Challenge} is
+ * An API to allow changing the method in which the expected {@link WebAuthnChallenge} is
  * associated to the {@link HttpServletRequest}. For example, it may be stored in
  * {@link HttpSession}.
  *
- * @see HttpSessionChallengeRepository
+ * @see HttpSessionWebAuthnChallengeRepository
  */
-public interface ChallengeRepository {
+public interface WebAuthnChallengeRepository {
 
 	/**
-	 * Generates a {@link Challenge}
+	 * Generates a {@link WebAuthnChallenge}
 	 *
-	 * @return the {@link Challenge} that was generated. Cannot be null.
+	 * @return the {@link WebAuthnChallenge} that was generated. Cannot be null.
 	 */
-	Challenge generateChallenge();
+	WebAuthnChallenge generateChallenge();
 
 	/**
-	 * Saves the {@link Challenge} using the {@link HttpServletRequest} and
-	 * {@link HttpServletResponse}. If the {@link Challenge} is null, it is the same as
+	 * Saves the {@link WebAuthnChallenge} using the {@link HttpServletRequest} and
+	 * {@link HttpServletResponse}. If the {@link WebAuthnChallenge} is null, it is the same as
 	 * deleting it.
 	 *
-	 * @param challenge the {@link Challenge} to save or null to delete
+	 * @param challenge the {@link WebAuthnChallenge} to save or null to delete
 	 * @param request   the {@link HttpServletRequest} to use
 	 */
-	void saveChallenge(Challenge challenge, HttpServletRequest request);
+	void saveChallenge(WebAuthnChallenge challenge, HttpServletRequest request);
 
 	/**
-	 * Loads the expected {@link Challenge} from the {@link HttpServletRequest}
+	 * Loads the expected {@link WebAuthnChallenge} from the {@link HttpServletRequest}
 	 *
 	 * @param request the {@link HttpServletRequest} to use
-	 * @return the {@link Challenge} or null if none exists
+	 * @return the {@link WebAuthnChallenge} or null if none exists
 	 */
-	Challenge loadChallenge(HttpServletRequest request);
+	WebAuthnChallenge loadChallenge(HttpServletRequest request);
 
 	/**
-	 * Loads or generates {@link Challenge} from the {@link HttpServletRequest}
+	 * Loads or generates {@link WebAuthnChallenge} from the {@link HttpServletRequest}
 	 *
 	 * @param request the {@link HttpServletRequest} to use
-	 * @return the {@link Challenge} or null if none exists
+	 * @return the {@link WebAuthnChallenge} or null if none exists
 	 */
-	default Challenge loadOrGenerateChallenge(HttpServletRequest request) {
-		Challenge challenge = this.loadChallenge(request);
+	default WebAuthnChallenge loadOrGenerateChallenge(HttpServletRequest request) {
+		WebAuthnChallenge challenge = this.loadChallenge(request);
 		if (challenge == null) {
 			challenge = this.generateChallenge();
 			this.saveChallenge(challenge, request);

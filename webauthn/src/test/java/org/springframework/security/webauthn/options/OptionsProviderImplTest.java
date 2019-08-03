@@ -25,7 +25,7 @@ import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 
@@ -46,7 +46,7 @@ public class OptionsProviderImplTest {
 		WebAuthnUserDetails userDetails = mock(WebAuthnUserDetails.class);
 		Authenticator authenticator = mock(Authenticator.class, RETURNS_DEEP_STUBS);
 		List<Authenticator> authenticators = Collections.singletonList(authenticator);
-		ChallengeRepository challengeRepository = mock(ChallengeRepository.class);
+		WebAuthnChallengeRepository webAuthnChallengeRepository = mock(WebAuthnChallengeRepository.class);
 
 		MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
@@ -54,9 +54,9 @@ public class OptionsProviderImplTest {
 		doReturn(new byte[0]).when(userDetails).getUserHandle();
 		doReturn(authenticators).when(userDetails).getAuthenticators();
 		when(authenticator.getAttestedCredentialData().getCredentialId()).thenReturn(credentialId);
-		when(challengeRepository.loadOrGenerateChallenge(mockRequest)).thenReturn(challenge);
+		when(webAuthnChallengeRepository.loadOrGenerateChallenge(mockRequest)).thenReturn(challenge);
 
-		OptionsProviderImpl optionsProviderImpl = new OptionsProviderImpl(userDetailsService, challengeRepository);
+		OptionsProviderImpl optionsProviderImpl = new OptionsProviderImpl(userDetailsService, webAuthnChallengeRepository);
 		optionsProviderImpl.setRpId("example.com");
 		optionsProviderImpl.setRpName("rpName");
 		optionsProviderImpl.setRpIcon("data://dummy");
@@ -78,7 +78,7 @@ public class OptionsProviderImplTest {
 		WebAuthnUserDetails userDetails = mock(WebAuthnUserDetails.class);
 		Authenticator authenticator = mock(Authenticator.class, RETURNS_DEEP_STUBS);
 		List<Authenticator> authenticators = Collections.singletonList(authenticator);
-		ChallengeRepository challengeRepository = mock(ChallengeRepository.class);
+		WebAuthnChallengeRepository webAuthnChallengeRepository = mock(WebAuthnChallengeRepository.class);
 
 		MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
@@ -87,7 +87,7 @@ public class OptionsProviderImplTest {
 		doReturn(authenticators).when(userDetails).getAuthenticators();
 		when(authenticator.getAttestedCredentialData().getCredentialId()).thenReturn(credentialId);
 
-		OptionsProviderImpl optionsProviderImpl = new OptionsProviderImpl(userDetailsService, challengeRepository);
+		OptionsProviderImpl optionsProviderImpl = new OptionsProviderImpl(userDetailsService, webAuthnChallengeRepository);
 		optionsProviderImpl.setRpId("example.com");
 		optionsProviderImpl.setRpName("rpName");
 		optionsProviderImpl.setRpIcon("data://dummy");
@@ -104,8 +104,8 @@ public class OptionsProviderImplTest {
 	@Test
 	public void getEffectiveRpId() {
 		WebAuthnUserDetailsService userDetailsService = mock(WebAuthnUserDetailsService.class);
-		ChallengeRepository challengeRepository = mock(ChallengeRepository.class);
-		OptionsProviderImpl optionsProvider = new OptionsProviderImpl(userDetailsService, challengeRepository);
+		WebAuthnChallengeRepository webAuthnChallengeRepository = mock(WebAuthnChallengeRepository.class);
+		OptionsProviderImpl optionsProvider = new OptionsProviderImpl(userDetailsService, webAuthnChallengeRepository);
 		optionsProvider.setRpId(null);
 		MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
 		httpServletRequest.setScheme("https");
@@ -118,8 +118,8 @@ public class OptionsProviderImplTest {
 	@Test
 	public void getter_setter_test() {
 		WebAuthnUserDetailsService userDetailsService = mock(WebAuthnUserDetailsService.class);
-		ChallengeRepository challengeRepository = mock(ChallengeRepository.class);
-		OptionsProviderImpl optionsProvider = new OptionsProviderImpl(userDetailsService, challengeRepository);
+		WebAuthnChallengeRepository webAuthnChallengeRepository = mock(WebAuthnChallengeRepository.class);
+		OptionsProviderImpl optionsProvider = new OptionsProviderImpl(userDetailsService, webAuthnChallengeRepository);
 
 		optionsProvider.setRpId("example.com");
 		assertThat(optionsProvider.getRpId()).isEqualTo("example.com");

@@ -22,18 +22,18 @@ import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.options.OptionsProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ServerPropertyProviderImplTest {
+public class WebAuthnServerPropertyProviderImplTest {
 
-	private ChallengeRepository challengeRepository = mock(ChallengeRepository.class);
+	private WebAuthnChallengeRepository webAuthnChallengeRepository = mock(WebAuthnChallengeRepository.class);
 	private OptionsProvider optionsProvider = mock(OptionsProvider.class);
-	private ServerPropertyProviderImpl target = new ServerPropertyProviderImpl(optionsProvider, challengeRepository);
+	private WebAuthnServerPropertyProviderImpl target = new WebAuthnServerPropertyProviderImpl(optionsProvider, webAuthnChallengeRepository);
 
 	@Test
 	public void provide_test() {
@@ -42,7 +42,7 @@ public class ServerPropertyProviderImplTest {
 		request.setServerName("origin.example.com");
 		request.setServerPort(443);
 		Challenge mockChallenge = new DefaultChallenge();
-		when(challengeRepository.loadOrGenerateChallenge(request)).thenReturn(mockChallenge);
+		when(webAuthnChallengeRepository.loadOrGenerateChallenge(request)).thenReturn(mockChallenge);
 		when(optionsProvider.getEffectiveRpId(request)).thenReturn("rpid.example.com");
 
 		ServerProperty serverProperty = target.provide(request);

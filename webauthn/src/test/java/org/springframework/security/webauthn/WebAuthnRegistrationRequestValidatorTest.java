@@ -32,7 +32,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.webauthn.exception.BadAttestationStatementException;
-import org.springframework.security.webauthn.server.ServerPropertyProvider;
+import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 
 import java.util.Collections;
 import java.util.Set;
@@ -53,17 +53,17 @@ public class WebAuthnRegistrationRequestValidatorTest {
 	private WebAuthnRegistrationContextValidator registrationContextValidator;
 
 	@Mock
-	private ServerPropertyProvider serverPropertyProvider;
+	private WebAuthnServerPropertyProvider webAuthnServerPropertyProvider;
 
 
 	@Test
 	public void validate_test() {
 		WebAuthnRegistrationRequestValidator target = new WebAuthnRegistrationRequestValidator(
-				registrationContextValidator, serverPropertyProvider
+				registrationContextValidator, webAuthnServerPropertyProvider
 		);
 
 		ServerProperty serverProperty = mock(ServerProperty.class);
-		when(serverPropertyProvider.provide(any())).thenReturn(serverProperty);
+		when(webAuthnServerPropertyProvider.provide(any())).thenReturn(serverProperty);
 
 		CollectedClientData collectedClientData = mock(CollectedClientData.class);
 		AttestationObject attestationObject = mock(AttestationObject.class);
@@ -96,11 +96,11 @@ public class WebAuthnRegistrationRequestValidatorTest {
 	@Test
 	public void validate_with_transports_null_test() {
 		WebAuthnRegistrationRequestValidator target = new WebAuthnRegistrationRequestValidator(
-				registrationContextValidator, serverPropertyProvider
+				registrationContextValidator, webAuthnServerPropertyProvider
 		);
 
 		ServerProperty serverProperty = mock(ServerProperty.class);
-		when(serverPropertyProvider.provide(any())).thenReturn(serverProperty);
+		when(webAuthnServerPropertyProvider.provide(any())).thenReturn(serverProperty);
 
 		CollectedClientData collectedClientData = mock(CollectedClientData.class);
 		AttestationObject attestationObject = mock(AttestationObject.class);
@@ -133,7 +133,7 @@ public class WebAuthnRegistrationRequestValidatorTest {
 	@Test
 	public void getter_setter_test() {
 		WebAuthnRegistrationRequestValidator target = new WebAuthnRegistrationRequestValidator(
-				registrationContextValidator, serverPropertyProvider
+				registrationContextValidator, webAuthnServerPropertyProvider
 		);
 		target.setExpectedRegistrationExtensionIds(Collections.singletonList("appId"));
 		assertThat(target.getExpectedRegistrationExtensionIds()).containsExactly("appId");
@@ -143,7 +143,7 @@ public class WebAuthnRegistrationRequestValidatorTest {
 	@Test(expected = BadAttestationStatementException.class)
 	public void validate_caught_exception_test() {
 		WebAuthnRegistrationRequestValidator target = new WebAuthnRegistrationRequestValidator(
-				registrationContextValidator, serverPropertyProvider
+				registrationContextValidator, webAuthnServerPropertyProvider
 		);
 		when(registrationContextValidator.validate(any())).thenThrow(new com.webauthn4j.validator.exception.BadAttestationStatementException("dummy"));
 

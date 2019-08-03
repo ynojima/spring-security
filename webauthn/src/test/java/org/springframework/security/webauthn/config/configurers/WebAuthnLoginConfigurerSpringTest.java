@@ -36,7 +36,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.webauthn.WebAuthnProcessingFilter;
-import org.springframework.security.webauthn.challenge.ChallengeRepository;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -217,10 +217,10 @@ public class WebAuthnLoginConfigurerSpringTest {
 			}
 
 			@Bean
-			public ChallengeRepository challengeRepository() {
-				ChallengeRepository challengeRepository = mock(ChallengeRepository.class);
-				when(challengeRepository.loadOrGenerateChallenge(any())).thenReturn(new DefaultChallenge("aFglXMZdQTKD4krvNzJBzA"));
-				return challengeRepository;
+			public WebAuthnChallengeRepository challengeRepository() {
+				WebAuthnChallengeRepository webAuthnChallengeRepository = mock(WebAuthnChallengeRepository.class);
+				when(webAuthnChallengeRepository.loadOrGenerateChallenge(any())).thenReturn(new DefaultChallenge("aFglXMZdQTKD4krvNzJBzA"));
+				return webAuthnChallengeRepository;
 			}
 
 		}

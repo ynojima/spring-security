@@ -16,9 +16,9 @@
 
 package org.springframework.security.webauthn.endpoint;
 
-import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.extension.client.AuthenticationExtensionsClientInputs;
 import com.webauthn4j.util.CollectionUtil;
+import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
 
 import java.io.Serializable;
 import java.util.List;
@@ -32,7 +32,7 @@ public class AssertionOptionsResponse implements Serializable {
 	// ~ Instance fields
 	// ================================================================================================
 
-	private Challenge challenge;
+	private WebAuthnChallenge challenge;
 	private Long timeout;
 	private String rpId;
 	private List<WebAuthnPublicKeyCredentialDescriptor> allowCredentials;
@@ -42,7 +42,7 @@ public class AssertionOptionsResponse implements Serializable {
 	// ===================================================================================================
 
 	public AssertionOptionsResponse(
-			Challenge challenge,
+			WebAuthnChallenge challenge,
 			Long timeout,
 			String rpId,
 			List<WebAuthnPublicKeyCredentialDescriptor> allowCredentials,
@@ -57,7 +57,7 @@ public class AssertionOptionsResponse implements Serializable {
 	// ~ Methods
 	// ========================================================================================================
 
-	public Challenge getChallenge() {
+	public WebAuthnChallenge getChallenge() {
 		return challenge;
 	}
 
