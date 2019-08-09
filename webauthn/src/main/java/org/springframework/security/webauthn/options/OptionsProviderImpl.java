@@ -19,6 +19,7 @@ package org.springframework.security.webauthn.options;
 import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.data.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.server.WebAuthnOrigin;
@@ -80,7 +81,7 @@ public class OptionsProviderImpl implements OptionsProvider {
 	public AttestationOptions getAttestationOptions(HttpServletRequest request, String username, WebAuthnChallenge challenge) {
 
 		PublicKeyCredentialUserEntity user;
-		Collection<? extends Authenticator> authenticators;
+		Collection<? extends WebAuthnAuthenticator> authenticators;
 
 		try {
 			WebAuthnUserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -94,7 +95,7 @@ public class OptionsProviderImpl implements OptionsProvider {
 		List<PublicKeyCredentialDescriptor> credentials = authenticators.stream()
 				.map(authenticator -> new PublicKeyCredentialDescriptor(
 						PublicKeyCredentialType.PUBLIC_KEY,
-						authenticator.getAttestedCredentialData().getCredentialId(),
+						authenticator.getCredentialId(),
 						null
 				))
 				.collect(Collectors.toList());
@@ -112,7 +113,7 @@ public class OptionsProviderImpl implements OptionsProvider {
 
 	public AssertionOptions getAssertionOptions(HttpServletRequest request, String username, WebAuthnChallenge challenge) {
 
-		Collection<? extends Authenticator> authenticators;
+		Collection<? extends WebAuthnAuthenticator> authenticators;
 		try {
 			WebAuthnUserDetails userDetails = userDetailsService.loadUserByUsername(username);
 			authenticators = userDetails.getAuthenticators();
@@ -125,7 +126,7 @@ public class OptionsProviderImpl implements OptionsProvider {
 		List<PublicKeyCredentialDescriptor> credentials = authenticators.stream()
 				.map(authenticator -> new PublicKeyCredentialDescriptor(
 						PublicKeyCredentialType.PUBLIC_KEY,
-						authenticator.getAttestedCredentialData().getCredentialId(),
+						authenticator.getCredentialId(),
 						null
 				))
 				.collect(Collectors.toList());

@@ -16,10 +16,10 @@
 
 package org.springframework.security.webauthn.userdetails;
 
-import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.util.ArrayUtil;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,10 +35,10 @@ public class WebAuthnUserDetailsImpl extends User implements WebAuthnUserDetails
 	// ~ Instance fields
 	// ================================================================================================
 	private byte[] userHandle;
-	private List<Authenticator> authenticators;
+	private List<WebAuthnAuthenticator> authenticators;
 
 	public WebAuthnUserDetailsImpl(
-			byte[] userHandle, String username, String password, List<Authenticator> authenticators,
+			byte[] userHandle, String username, String password, List<WebAuthnAuthenticator> authenticators,
 			Collection<? extends GrantedAuthority> authorities) {
 		this(userHandle, username, password, authenticators,
 				true, true, true, true,
@@ -47,7 +47,7 @@ public class WebAuthnUserDetailsImpl extends User implements WebAuthnUserDetails
 
 	@SuppressWarnings("squid:S00107")
 	public WebAuthnUserDetailsImpl(
-			byte[] userHandle, String username, String password, List<Authenticator> authenticators, boolean enabled, boolean accountNonExpired,
+			byte[] userHandle, String username, String password, List<WebAuthnAuthenticator> authenticators, boolean enabled, boolean accountNonExpired,
 			boolean credentialsNonExpired, boolean accountNonLocked,
 			Collection<? extends GrantedAuthority> authorities) {
 		super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
@@ -61,7 +61,7 @@ public class WebAuthnUserDetailsImpl extends User implements WebAuthnUserDetails
 	}
 
 	@Override
-	public List<Authenticator> getAuthenticators() {
+	public List<WebAuthnAuthenticator> getAuthenticators() {
 		return this.authenticators;
 	}
 

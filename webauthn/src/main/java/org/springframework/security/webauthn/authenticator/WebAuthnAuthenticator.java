@@ -16,7 +16,13 @@
 
 package org.springframework.security.webauthn.authenticator;
 
+import com.webauthn4j.data.AuthenticatorTransport;
+import com.webauthn4j.data.extension.authenticator.RegistrationExtensionAuthenticatorOutput;
+import com.webauthn4j.data.extension.client.RegistrationExtensionClientOutput;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Models core authenticator information retrieved by a {@link WebAuthnUserDetailsService}
@@ -26,9 +32,7 @@ import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsServ
  */
 public interface WebAuthnAuthenticator {
 
-	String getName();
-
-	void setName(String name);
+	byte[] getCredentialId();
 
 	byte[] getAttestedCredentialData();
 
@@ -37,5 +41,14 @@ public interface WebAuthnAuthenticator {
 	byte[] getAttestationStatement();
 
 	void setAttestationStatement(byte[] attestationStatement);
+
+	long getCounter();
+
+	Set<AuthenticatorTransport> getTransports();
+
+	Map<String, RegistrationExtensionClientOutput> getClientExtensions();
+	void setClientExtensions(Map<String, RegistrationExtensionClientOutput> clientExtensions) ;
+	Map<String, RegistrationExtensionAuthenticatorOutput> getAuthenticatorExtensions();
+	void setAuthenticatorExtensions(Map<String, RegistrationExtensionAuthenticatorOutput> authenticatorExtensions) ;
 
 }

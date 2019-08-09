@@ -21,4 +21,5 @@ public class WebAuthn4JUtil {
 				new DefaultChallenge(webAuthnServerProperty.getChallenge().getValue()),
 				webAuthnServerProperty.getTokenBindingId());
 	}
+
 }

@@ -19,6 +19,7 @@ package org.springframework.security.webauthn.userdetails;
 import com.webauthn4j.authenticator.Authenticator;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 import org.springframework.security.webauthn.exception.CredentialIdNotFoundException;
 
 /**
@@ -55,7 +56,7 @@ public interface WebAuthnUserDetailsService extends UserDetailsService {
 	 * @param username      the username identifying the user
 	 * @param authenticator the authenticator to be added
 	 */
-	void addAuthenticator(String username, Authenticator authenticator);
+	void addAuthenticator(String username, WebAuthnAuthenticator authenticator);
 
 	/**
 	 * Removes {@link Authenticator} from the user record
@@ -63,7 +64,7 @@ public interface WebAuthnUserDetailsService extends UserDetailsService {
 	 * @param username      the username identifying the user
 	 * @param authenticator the authenticator to be removed
 	 */
-	void removeAuthenticator(String username, Authenticator authenticator);
+	void removeAuthenticator(String username, WebAuthnAuthenticator authenticator);
 
 	/**
 	 * Removes {@link Authenticator} from the user record

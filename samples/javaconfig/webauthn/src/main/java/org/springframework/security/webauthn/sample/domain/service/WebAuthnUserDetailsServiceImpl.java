@@ -19,6 +19,7 @@ package org.springframework.security.webauthn.sample.domain.service;
 import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.util.Base64UrlUtil;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticatorService;
 import org.springframework.security.webauthn.exception.CredentialIdNotFoundException;
 import org.springframework.security.webauthn.sample.domain.entity.AuthenticatorEntity;
@@ -63,12 +64,12 @@ public class WebAuthnUserDetailsServiceImpl implements WebAuthnUserDetailsServic
 	}
 
 	@Override
-	public void addAuthenticator(String username, Authenticator authenticator) {
+	public void addAuthenticator(String username, WebAuthnAuthenticator authenticator) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void removeAuthenticator(String username, Authenticator authenticator) {
+	public void removeAuthenticator(String username, WebAuthnAuthenticator authenticator) {
 		throw new UnsupportedOperationException();
 	}
 

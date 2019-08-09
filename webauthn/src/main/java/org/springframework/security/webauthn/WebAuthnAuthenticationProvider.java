@@ -17,6 +17,7 @@
 package org.springframework.security.webauthn;
 
 import com.webauthn4j.authenticator.Authenticator;
+import com.webauthn4j.authenticator.AuthenticatorImpl;
 import com.webauthn4j.data.WebAuthnAuthenticationContext;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.util.exception.WebAuthnException;
@@ -32,6 +33,7 @@ import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
+import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticatorService;
 import org.springframework.security.webauthn.exception.CredentialIdNotFoundException;
 import org.springframework.security.webauthn.request.WebAuthnAuthenticationRequest;
@@ -110,8 +112,8 @@ public class WebAuthnAuthenticationProvider implements AuthenticationProvider {
 		byte[] credentialId = credentials.getCredentialId();
 
 		WebAuthnUserDetails user = retrieveWebAuthnUserDetails(credentialId);
-		Authenticator authenticator = user.getAuthenticators().stream()
-				.filter(item -> Arrays.equals(item.getAttestedCredentialData().getCredentialId(), credentialId))
+		WebAuthnAuthenticator authenticator = user.getAuthenticators().stream()
+				.filter(item -> Arrays.equals(item.getCredentialId(), credentialId))
 				.findFirst()
 				.orElse(null);
 
@@ -144,7 +146,7 @@ public class WebAuthnAuthenticationProvider implements AuthenticationProvider {
 		return WebAuthnAssertionAuthenticationToken.class.isAssignableFrom(authentication);
 	}
 
-	void doAuthenticate(WebAuthnAssertionAuthenticationToken authenticationToken, Authenticator authenticator, WebAuthnUserDetails user) {
+	void doAuthenticate(WebAuthnAssertionAuthenticationToken authenticationToken, WebAuthnAuthenticator webAuthnAuthenticator, WebAuthnUserDetails user) {
 
 		WebAuthnAuthenticationRequest credentials = authenticationToken.getCredentials();
 
@@ -163,6 +165,8 @@ public class WebAuthnAuthenticationProvider implements AuthenticationProvider {
 				credentials.isUserPresenceRequired(),
 				credentials.getExpectedAuthenticationExtensionIds()
 		);
+
+		Authenticator authenticator = new AuthenticatorImpl(null, null, webAuthnAuthenticator.getCounter(), null);
 
 		try {
 			authenticationContextValidator.validate(authenticationContext, authenticator);

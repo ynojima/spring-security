@@ -16,8 +16,8 @@
 
 package org.springframework.security.webauthn.userdetails;
 
-import com.webauthn4j.authenticator.Authenticator;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 
 import java.util.Collection;
 
@@ -29,7 +29,7 @@ import java.util.Collection;
 public interface WebAuthnUserDetails extends UserDetails {
 
 	@SuppressWarnings("squid:S1452")
-	Collection<? extends Authenticator> getAuthenticators();
+	Collection<? extends WebAuthnAuthenticator> getAuthenticators();
 
 	byte[] getUserHandle();
 }

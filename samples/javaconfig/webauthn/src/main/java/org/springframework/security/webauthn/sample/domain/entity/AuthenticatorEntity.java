@@ -16,19 +16,18 @@
 
 package org.springframework.security.webauthn.sample.domain.entity;
 
-import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.data.AuthenticatorTransport;
-import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData;
-import com.webauthn4j.data.attestation.statement.AttestationStatement;
 import com.webauthn4j.data.extension.authenticator.RegistrationExtensionAuthenticatorOutput;
 import com.webauthn4j.data.extension.client.RegistrationExtensionClientOutput;
+import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
+
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Authenticator model
  */
-public class AuthenticatorEntity implements Authenticator {
+public class AuthenticatorEntity implements WebAuthnAuthenticator {
 
 	private Integer id;
 
@@ -40,17 +39,13 @@ public class AuthenticatorEntity implements Authenticator {
 
 	private Set<AuthenticatorTransport> transports;
 
-	private AttestedCredentialData attestedCredentialData;
+	private byte[] attestedCredentialData;
 
-	private AttestationStatement attestationStatement;
+	private byte[] attestationStatement;
 
 	private Map<String, RegistrationExtensionClientOutput> clientExtensions;
 
 	private Map<String, RegistrationExtensionAuthenticatorOutput> authenticatorExtensions;
-
-	public String getFormat() {
-		return attestationStatement.getFormat();
-	}
 
 	public Integer getId() {
 		return id;
@@ -93,19 +88,19 @@ public class AuthenticatorEntity implements Authenticator {
 		this.transports = transports;
 	}
 
-	public AttestedCredentialData getAttestedCredentialData() {
+	public byte[] getAttestedCredentialData() {
 		return attestedCredentialData;
 	}
 
-	public void setAttestedCredentialData(AttestedCredentialData attestedCredentialData) {
+	public void setAttestedCredentialData(byte[] attestedCredentialData) {
 		this.attestedCredentialData = attestedCredentialData;
 	}
 
-	public AttestationStatement getAttestationStatement() {
+	public byte[] getAttestationStatement() {
 		return attestationStatement;
 	}
 
-	public void setAttestationStatement(AttestationStatement attestationStatement) {
+	public void setAttestationStatement(byte[] attestationStatement) {
 		this.attestationStatement = attestationStatement;
 	}
 
