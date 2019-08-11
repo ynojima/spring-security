@@ -23,11 +23,11 @@ import com.webauthn4j.data.extension.client.AuthenticationExtensionsClientOutput
 import java.util.Objects;
 
 /**
- * Response from {@link WebAuthnRegistrationRequestValidator}
+ * Response from {@link WebAuthnAuthenticationManager}
  *
  * @author Yoshikazu Nojima
  */
-public class WebAuthnRegistrationRequestValidationResponse {
+public class WebAuthnRegistrationRequestVerificationResponse {
 
 	// ~ Instance fields
 	// ================================================================================================
@@ -39,7 +39,7 @@ public class WebAuthnRegistrationRequestValidationResponse {
 	// ~ Constructors
 	// ===================================================================================================
 
-	public WebAuthnRegistrationRequestValidationResponse(CollectedClientData collectedClientData, AttestationObject attestationObject, AuthenticationExtensionsClientOutputs registrationExtensionsClientOutputs) {
+	public WebAuthnRegistrationRequestVerificationResponse(CollectedClientData collectedClientData, AttestationObject attestationObject, AuthenticationExtensionsClientOutputs registrationExtensionsClientOutputs) {
 		this.collectedClientData = collectedClientData;
 		this.attestationObject = attestationObject;
 		this.registrationExtensionsClientOutputs = registrationExtensionsClientOutputs;
@@ -64,7 +64,7 @@ public class WebAuthnRegistrationRequestValidationResponse {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		WebAuthnRegistrationRequestValidationResponse that = (WebAuthnRegistrationRequestValidationResponse) o;
+		WebAuthnRegistrationRequestVerificationResponse that = (WebAuthnRegistrationRequestVerificationResponse) o;
 		return Objects.equals(collectedClientData, that.collectedClientData) &&
 				Objects.equals(attestationObject, that.attestationObject) &&
 				Objects.equals(registrationExtensionsClientOutputs, that.registrationExtensionsClientOutputs);

@@ -16,6 +16,7 @@
 
 package org.springframework.security.webauthn.sample.app.config;
 
+import com.webauthn4j.converter.util.CborConverter;
 import com.webauthn4j.validator.WebAuthnAuthenticationContextValidator;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
 import org.springframework.context.annotation.Bean;
@@ -24,35 +25,55 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.webauthn.WebAuthn4JWebAuthnAuthenticationManager;
+import org.springframework.security.webauthn.WebAuthnAuthenticationManager;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
 import org.springframework.security.webauthn.challenge.HttpSessionWebAuthnChallengeRepository;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
-import org.springframework.security.webauthn.options.OptionsProvider;
-import org.springframework.security.webauthn.options.OptionsProviderImpl;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProviderImpl;
-import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 
 @Configuration
 public class WebSecurityBeanConfig {
 
 	@Bean
-	public WebAuthnRegistrationRequestValidator webAuthnRegistrationRequestValidator(WebAuthnServerPropertyProvider webAuthnServerPropertyProvider) {
-		WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator = WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator();
-		return new WebAuthnRegistrationRequestValidator(webAuthnRegistrationContextValidator, webAuthnServerPropertyProvider);
+	public WebAuthnServerPropertyProvider webAuthnServerPropertyProvider(WebAuthnChallengeRepository webAuthnChallengeRepository){
+		return new WebAuthnServerPropertyProviderImpl(webAuthnChallengeRepository);
 	}
 
 	@Bean
-	public WebAuthnServerPropertyProvider serverPropertyProvider(WebAuthnUserDetailsService webAuthnUserDetailsService) {
-		WebAuthnChallengeRepository webAuthnChallengeRepository = new HttpSessionWebAuthnChallengeRepository();
-		OptionsProvider optionsProvider = new OptionsProviderImpl(webAuthnUserDetailsService, webAuthnChallengeRepository);
-		return new WebAuthnServerPropertyProviderImpl(optionsProvider, webAuthnChallengeRepository);
+	public WebAuthnChallengeRepository webAuthnChallengeRepository(){
+		return new HttpSessionWebAuthnChallengeRepository();
+	}
+
+	@Bean
+	public CborConverter cborConverter(){
+		return new CborConverter();
 	}
 
 	@Bean
 	public WebAuthnAuthenticationContextValidator webAuthnAuthenticationContextValidator() {
 		return new WebAuthnAuthenticationContextValidator();
 	}
+
+	@Bean
+	public WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator(){
+		return WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator();
+	}
+
+	@Bean
+	public WebAuthnAuthenticationManager webAuthnAuthenticationManager(
+			WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator,
+			WebAuthnAuthenticationContextValidator webAuthnAuthenticationContextValidator,
+			CborConverter cborConverter){
+		return new WebAuthn4JWebAuthnAuthenticationManager(webAuthnRegistrationContextValidator, webAuthnAuthenticationContextValidator, cborConverter);
+	}
+
+	@Bean
+	public WebAuthnRegistrationRequestValidator webAuthnRegistrationRequestValidator(WebAuthnAuthenticationManager webAuthnAuthenticationManager, WebAuthnServerPropertyProvider webAuthnServerPropertyProvider){
+		return new WebAuthnRegistrationRequestValidator(webAuthnAuthenticationManager, webAuthnServerPropertyProvider);
+	}
+
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {

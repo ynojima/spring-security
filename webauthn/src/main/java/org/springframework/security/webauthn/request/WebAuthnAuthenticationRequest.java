@@ -40,10 +40,11 @@ public class WebAuthnAuthenticationRequest implements Serializable {
 	private final byte[] authenticatorData;
 	private final byte[] signature;
 	private final String clientExtensionsJSON;
+
 	private final WebAuthnServerProperty serverProperty;
 	private final boolean userVerificationRequired;
 	private final boolean userPresenceRequired;
-	private List<String> expectedAuthenticationExtensionIds;
+	private final List<String> expectedAuthenticationExtensionIds;
 
 	@SuppressWarnings("squid:S00107")
 	public WebAuthnAuthenticationRequest(
@@ -127,6 +128,8 @@ public class WebAuthnAuthenticationRequest implements Serializable {
 	public List<String> getExpectedAuthenticationExtensionIds() {
 		return expectedAuthenticationExtensionIds;
 	}
+
+
 
 	@Override
 	public boolean equals(Object o) {

@@ -58,7 +58,7 @@ public class WebAuthnUserDetailsServiceImpl implements WebAuthnUserDetailsServic
 	public WebAuthnUserDetails loadUserByCredentialId(byte[] credentialId) {
 		return users
 				.stream()
-				.filter(user -> user.getAuthenticators().stream().anyMatch(authenticator -> Arrays.equals(authenticator.getAttestedCredentialData().getCredentialId(), credentialId)))
+				.filter(user -> user.getAuthenticators().stream().anyMatch(authenticator -> Arrays.equals(authenticator.getCredentialId(), credentialId)))
 				.findFirst()
 				.orElseThrow(() -> new CredentialIdNotFoundException(String.format("AuthenticatorEntity with credentialId'%s' is not found.", Base64UrlUtil.encodeToString(credentialId))));
 	}
@@ -89,7 +89,7 @@ public class WebAuthnUserDetailsServiceImpl implements WebAuthnUserDetailsServic
 		AuthenticatorEntity authenticator = users
 				.stream()
 				.flatMap(user -> user.getAuthenticators().stream())
-				.filter(entry -> Arrays.equals(entry.getAttestedCredentialData().getCredentialId(), credentialId))
+				.filter(entry -> Arrays.equals(entry.getCredentialId(), credentialId))
 				.findFirst()
 				.orElseThrow(() -> new CredentialIdNotFoundException(String.format("AuthenticatorEntity with credentialId'%s' is not found.", Base64UrlUtil.encodeToString(credentialId))));
 

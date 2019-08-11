@@ -1,6 +1,5 @@
 package org.springframework.security.webauthn.server;
 
-import com.webauthn4j.data.client.Origin;
 import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
 
 import java.util.Arrays;

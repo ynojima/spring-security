@@ -16,14 +16,17 @@
 
 package org.springframework.security.webauthn.sample.app.web;
 
+import com.webauthn4j.util.Base64UrlUtil;
 import com.webauthn4j.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.MultiFactorAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidationResponse;
+import org.springframework.security.webauthn.WebAuthnAuthenticationManager;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
+import org.springframework.security.webauthn.WebAuthnRegistrationRequestVerificationResponse;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.exception.ValidationException;
 import org.springframework.security.webauthn.sample.domain.entity.AuthenticatorEntity;
 import org.springframework.security.webauthn.sample.domain.entity.UserEntity;
@@ -68,6 +71,9 @@ public class WebAuthnSampleController {
 	private WebAuthnRegistrationRequestValidator registrationRequestValidator;
 
 	@Autowired
+	private WebAuthnChallengeRepository challengeRepository;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@RequestMapping(value = "/")
@@ -81,12 +87,14 @@ public class WebAuthnSampleController {
 	}
 
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
-	public String template(Model model) {
+	public String template(Model model, HttpServletRequest request) {
 		UserCreateForm userCreateForm = new UserCreateForm();
 		UUID userHandle = UUID.randomUUID();
 		String userHandleStr = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(UUIDUtil.convertUUIDToBytes(userHandle));
 		userCreateForm.setUserHandle(userHandleStr);
 		model.addAttribute("userForm", userCreateForm);
+		String challenge = Base64UrlUtil.encodeToString(challengeRepository.loadOrGenerateChallenge(request).getValue());
+		model.addAttribute("challenge", challenge);
 		return VIEW_SIGNUP_SIGNUP;
 	}
 
@@ -96,9 +104,9 @@ public class WebAuthnSampleController {
 		if (result.hasErrors()) {
 			return VIEW_SIGNUP_SIGNUP;
 		}
-		WebAuthnRegistrationRequestValidationResponse webAuthnRegistrationRequestValidationResponse;
+		WebAuthnRegistrationRequestVerificationResponse webAuthnRegistrationRequestVerificationResponse;
 		try {
-			webAuthnRegistrationRequestValidationResponse = registrationRequestValidator.validate(
+			webAuthnRegistrationRequestVerificationResponse = registrationRequestValidator.validate(
 					request,
 					userCreateForm.getAuthenticator().getClientDataJSON(),
 					userCreateForm.getAuthenticator().getAttestationObject(),
@@ -120,9 +128,9 @@ public class WebAuthnSampleController {
 		AuthenticatorCreateForm sourceAuthenticator = userCreateForm.getAuthenticator();
 		authenticator.setUser(destination);
 		authenticator.setName(null); // sample application doesn't name authenticator
-		authenticator.setAttestationStatement(webAuthnRegistrationRequestValidationResponse.getAttestationObject().getAttestationStatement());
-		authenticator.setAttestedCredentialData(webAuthnRegistrationRequestValidationResponse.getAttestationObject().getAuthenticatorData().getAttestedCredentialData());
-		authenticator.setCounter(webAuthnRegistrationRequestValidationResponse.getAttestationObject().getAuthenticatorData().getSignCount());
+		authenticator.setAttestationStatement(null); //TODO
+		authenticator.setAttestedCredentialData(null); //TODO
+		authenticator.setCounter(webAuthnRegistrationRequestVerificationResponse.getAttestationObject().getAuthenticatorData().getSignCount());
 		authenticator.setTransports(sourceAuthenticator.getTransports());
 		authenticators.add(authenticator);
 

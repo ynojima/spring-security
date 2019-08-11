@@ -80,6 +80,11 @@ public class AuthenticatorEntity implements WebAuthnAuthenticator {
 	}
 
 	@Override
+	public byte[] getCredentialId() {
+		return new byte[0];
+	}
+
+	@Override
 	public Set<AuthenticatorTransport> getTransports() {
 		return transports;
 	}

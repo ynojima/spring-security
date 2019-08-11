@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class WebAuthnAuthenticatorImpl implements WebAuthnAuthenticator {
+public class  WebAuthnAuthenticatorImpl implements WebAuthnAuthenticator {
 
 	// ~ Instance fields
 	// ================================================================================================

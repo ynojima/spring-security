@@ -26,17 +26,17 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WebAuthnRegistrationRequestValidationResponseTest {
+public class WebAuthnRegistrationRequestVerificationResponseTest {
 
 	@Test
 	public void equals_hashCode_test() {
 		CollectedClientData clientData = TestDataUtil.createClientData(ClientDataType.CREATE);
 		AttestationObject attestationObject = TestDataUtil.createAttestationObjectWithFIDOU2FAttestationStatement();
 		AuthenticationExtensionsClientOutputs clientExtensions = new AuthenticationExtensionsClientOutputs();
-		WebAuthnRegistrationRequestValidationResponse instanceA =
-				new WebAuthnRegistrationRequestValidationResponse(clientData, attestationObject, clientExtensions);
-		WebAuthnRegistrationRequestValidationResponse instanceB =
-				new WebAuthnRegistrationRequestValidationResponse(clientData, attestationObject, clientExtensions);
+		WebAuthnRegistrationRequestVerificationResponse instanceA =
+				new WebAuthnRegistrationRequestVerificationResponse(clientData, attestationObject, clientExtensions);
+		WebAuthnRegistrationRequestVerificationResponse instanceB =
+				new WebAuthnRegistrationRequestVerificationResponse(clientData, attestationObject, clientExtensions);
 		assertThat(instanceA).isEqualTo(instanceB);
 		assertThat(instanceB).hasSameHashCodeAs(instanceB);
 	}
@@ -46,8 +46,8 @@ public class WebAuthnRegistrationRequestValidationResponseTest {
 		CollectedClientData clientData = TestDataUtil.createClientData(ClientDataType.CREATE);
 		AttestationObject attestationObject = TestDataUtil.createAttestationObjectWithFIDOU2FAttestationStatement();
 		AuthenticationExtensionsClientOutputs clientExtensions = new AuthenticationExtensionsClientOutputs();
-		WebAuthnRegistrationRequestValidationResponse instance =
-				new WebAuthnRegistrationRequestValidationResponse(clientData, attestationObject, clientExtensions);
+		WebAuthnRegistrationRequestVerificationResponse instance =
+				new WebAuthnRegistrationRequestVerificationResponse(clientData, attestationObject, clientExtensions);
 
 		assertThat(instance.getCollectedClientData()).isEqualTo(clientData);
 		assertThat(instance.getAttestationObject()).isEqualTo(attestationObject);

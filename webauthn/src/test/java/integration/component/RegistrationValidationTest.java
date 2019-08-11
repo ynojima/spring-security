@@ -29,7 +29,7 @@ import com.webauthn4j.util.Base64UrlUtil;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidationResponse;
+import org.springframework.security.webauthn.WebAuthnRegistrationRequestVerificationResponse;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 
@@ -93,7 +93,7 @@ public class RegistrationValidationTest {
 		Set<String> transports = Collections.emptySet();
 		String clientExtensionsJSON = null;
 
-		WebAuthnRegistrationRequestValidationResponse response
+		WebAuthnRegistrationRequestVerificationResponse response
 				= target.validate(mockHttpServletRequest, clientDataBase64, attestationObjectBase64, transports, clientExtensionsJSON);
 
 		assertThat(response.getAttestationObject()).isNotNull();
