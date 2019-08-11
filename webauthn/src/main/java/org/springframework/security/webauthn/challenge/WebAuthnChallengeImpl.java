@@ -1,5 +1,7 @@
 package org.springframework.security.webauthn.challenge;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.webauthn4j.util.ArrayUtil;
 import com.webauthn4j.util.AssertUtil;
 import com.webauthn4j.util.Base64UrlUtil;
@@ -31,6 +33,16 @@ public class WebAuthnChallengeImpl implements WebAuthnChallenge {
 		long hi = uuid.getMostSignificantBits();
 		long lo = uuid.getLeastSignificantBits();
 		this.value = ByteBuffer.allocate(16).putLong(hi).putLong(lo).array();
+	}
+
+	@JsonCreator
+	public WebAuthnChallengeImpl create(String base64url){
+		return new WebAuthnChallengeImpl(Base64UrlUtil.decode(base64url));
+	}
+
+	@JsonValue
+	public String toBase64UrlString(){
+		return Base64UrlUtil.encodeToString(getValue());
 	}
 
 	@Override

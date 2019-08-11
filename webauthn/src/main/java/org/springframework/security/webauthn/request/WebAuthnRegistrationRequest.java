@@ -2,6 +2,7 @@ package org.springframework.security.webauthn.request;
 
 import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 
+import java.util.List;
 import java.util.Set;
 
 public class WebAuthnRegistrationRequest {
@@ -12,13 +13,17 @@ public class WebAuthnRegistrationRequest {
 	private final String clientExtensionsJSON;
 
 	private final WebAuthnServerProperty serverProperty;
+	private final List<String> expectedRegistrationExtensionIds;
 
-	public WebAuthnRegistrationRequest(String clientDataBase64url, String attestationObjectBase64url, Set<String> transports, String clientExtensionsJSON, WebAuthnServerProperty serverProperty) {
+	public WebAuthnRegistrationRequest(String clientDataBase64url, String attestationObjectBase64url, Set<String> transports, String clientExtensionsJSON,
+									   WebAuthnServerProperty serverProperty,
+									   List<String> expectedRegistrationExtensionIds) {
 		this.clientDataBase64url = clientDataBase64url;
 		this.attestationObjectBase64url = attestationObjectBase64url;
 		this.transports = transports;
 		this.clientExtensionsJSON = clientExtensionsJSON;
 		this.serverProperty = serverProperty;
+		this.expectedRegistrationExtensionIds = expectedRegistrationExtensionIds;
 	}
 
 	public String getClientDataBase64url() {
@@ -41,5 +46,7 @@ public class WebAuthnRegistrationRequest {
 		return serverProperty;
 	}
 
-
+	public List<String> getExpectedRegistrationExtensionIds() {
+		return expectedRegistrationExtensionIds;
+	}
 }

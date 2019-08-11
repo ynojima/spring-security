@@ -16,6 +16,9 @@
 
 package org.springframework.security.webauthn.sample.app.config;
 
+import com.webauthn4j.data.AttestationConveyancePreference;
+import com.webauthn4j.data.PublicKeyCredentialType;
+import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -32,8 +35,7 @@ import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator
 import org.springframework.security.webauthn.config.configurers.WebAuthnAuthenticationProviderConfigurer;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 
-//import static org.springframework.security.webauthn.config.configurers.WebAuthnLoginConfigurer.webAuthnLogin;
-
+import static org.springframework.security.webauthn.config.configurers.WebAuthnLoginConfigurer.webAuthnLogin;
 
 /**
  * Security Configuration
@@ -77,24 +79,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-//		// WebAuthn Login
-//		http.apply(webAuthnLogin())
-//				.rpName("Spring Security WebAuthn Sample")
-//				.attestation(AttestationConveyancePreference.NONE)
-//				.publicKeyCredParams()
-//				.addPublicKeyCredParams(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS256)  // Windows Hello
-//				.addPublicKeyCredParams(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES256) // FIDO U2F Key, etc
-//				.and()
-//				.loginPage("/login")
-//				.usernameParameter("username")
-//				.passwordParameter("password")
-//				.credentialIdParameter("credentialId")
-//				.clientDataJSONParameter("clientDataJSON")
-//				.authenticatorDataParameter("authenticatorData")
-//				.signatureParameter("signature")
-//				.clientExtensionsJSONParameter("clientExtensionsJSON")
-//				.loginProcessingUrl("/login")
-//				.defaultSuccessUrl("/dashboard");
+		// WebAuthn Login
+		http.apply(webAuthnLogin())
+				.rpName("Spring Security WebAuthn Sample")
+				.attestation(AttestationConveyancePreference.NONE)
+				.publicKeyCredParams()
+				.addPublicKeyCredParams(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS256)  // Windows Hello
+				.addPublicKeyCredParams(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES256) // FIDO U2F Key, etc
+				.and()
+				.loginPage("/login")
+				.usernameParameter("username")
+				.passwordParameter("password")
+				.credentialIdParameter("credentialId")
+				.clientDataJSONParameter("clientDataJSON")
+				.authenticatorDataParameter("authenticatorData")
+				.signatureParameter("signature")
+				.clientExtensionsJSONParameter("clientExtensionsJSON")
+				.loginProcessingUrl("/login")
+				.defaultSuccessUrl("/dashboard");
 
 		// Logout
 		http.logout()

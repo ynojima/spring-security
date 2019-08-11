@@ -6,12 +6,15 @@ import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvid
 import org.springframework.util.Assert;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Set;
 
 public class WebAuthnRegistrationRequestValidator {
 
 	private WebAuthnAuthenticationManager webAuthnAuthenticationManager;
 	private WebAuthnServerPropertyProvider webAuthnServerPropertyProvider;
+
+	private List<String> expectedRegistrationExtensionIds;
 
 	public WebAuthnRegistrationRequestValidator(
 			WebAuthnAuthenticationManager webAuthnAuthenticationManager,
@@ -37,9 +40,17 @@ public class WebAuthnRegistrationRequestValidator {
 		WebAuthnServerProperty webAuthnServerProperty = webAuthnServerPropertyProvider.provide(httpServletRequest);
 
 		WebAuthnRegistrationRequest webAuthnRegistrationRequest =
-				new WebAuthnRegistrationRequest(clientDataBase64url, attestationObjectBase64url, transports, clientExtensionsJSON, webAuthnServerProperty);
+				new WebAuthnRegistrationRequest(clientDataBase64url, attestationObjectBase64url, transports, clientExtensionsJSON, webAuthnServerProperty, expectedRegistrationExtensionIds);
 
 		return webAuthnAuthenticationManager.verifyRegistrationRequest(webAuthnRegistrationRequest);
+	}
+
+	public List<String> getExpectedRegistrationExtensionIds() {
+		return expectedRegistrationExtensionIds;
+	}
+
+	public void setExpectedRegistrationExtensionIds(List<String> expectedRegistrationExtensionIds) {
+		this.expectedRegistrationExtensionIds = expectedRegistrationExtensionIds;
 	}
 
 }
