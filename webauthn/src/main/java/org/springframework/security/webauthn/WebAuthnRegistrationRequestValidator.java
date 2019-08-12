@@ -32,11 +32,6 @@ public class WebAuthnRegistrationRequestValidator {
 			String clientExtensionsJSON
 	) {
 		Assert.notNull(httpServletRequest, "httpServletRequest must not be null");
-		Assert.hasText(clientDataBase64url, "clientDataBase64url must have text");
-		Assert.hasText(attestationObjectBase64url, "attestationObjectBase64url must have text");
-		if (transports != null) {
-			transports.forEach(transport -> Assert.hasText(transport, "each transport must have text"));
-		}
 		WebAuthnServerProperty webAuthnServerProperty = webAuthnServerPropertyProvider.provide(httpServletRequest);
 
 		WebAuthnRegistrationRequest webAuthnRegistrationRequest =
