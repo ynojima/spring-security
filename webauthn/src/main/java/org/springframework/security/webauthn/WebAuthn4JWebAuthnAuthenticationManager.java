@@ -2,11 +2,13 @@ package org.springframework.security.webauthn;
 
 import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.authenticator.AuthenticatorImpl;
+import com.webauthn4j.converter.AttestedCredentialDataConverter;
 import com.webauthn4j.converter.util.CborConverter;
+import com.webauthn4j.data.AuthenticatorTransport;
 import com.webauthn4j.data.WebAuthnAuthenticationContext;
 import com.webauthn4j.data.WebAuthnRegistrationContext;
+import com.webauthn4j.data.attestation.AttestationObject;
 import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData;
-import com.webauthn4j.data.attestation.statement.AttestationStatement;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.util.Base64UrlUtil;
 import com.webauthn4j.util.exception.WebAuthnException;
@@ -20,6 +22,7 @@ import org.springframework.security.webauthn.util.ExceptionUtil;
 import org.springframework.security.webauthn.util.WebAuthn4JUtil;
 import org.springframework.util.Assert;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +35,7 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 
 	private CborConverter cborConverter;
 
-	private String rpId;
+	private String rpId; //TODO
 	private List<String> expectedRegistrationExtensionIds;
 
 	public WebAuthn4JWebAuthnAuthenticationManager(
@@ -84,9 +87,17 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 				webAuthnAuthenticationRequest.getExpectedAuthenticationExtensionIds()
 		);
 
-		AttestedCredentialData attestedCredentialData = cborConverter.readValue(webAuthnAuthenticator.getAttestedCredentialData(), AttestedCredentialData.class);
-		AttestationStatement attestationStatement = cborConverter.readValue(webAuthnAuthenticator.getAttestationStatement(), AttestationStatement.class);
-		Authenticator authenticator = new AuthenticatorImpl(attestedCredentialData, attestationStatement, webAuthnAuthenticator.getCounter(), null); //TODO
+		AttestationObject attestationObject = cborConverter.readValue(webAuthnAuthenticator.getAttestationObject(), AttestationObject.class);
+
+		Set<AuthenticatorTransport> transports = webAuthnAuthenticator.getTransports();
+		transports = transports == null ? Collections.emptySet() : transports;
+
+		Authenticator authenticator = new AuthenticatorImpl(
+				attestationObject.getAuthenticatorData().getAttestedCredentialData(),
+				attestationObject.getAttestationStatement(),
+				webAuthnAuthenticator.getCounter(),
+				transports
+				);
 
 		try {
 			authenticationContextValidator.validate(authenticationContext, authenticator);

@@ -34,21 +34,15 @@ public interface WebAuthnAuthenticator {
 
 	byte[] getCredentialId();
 
-	byte[] getAttestedCredentialData();
+	byte[] getAttestationObject();
 
-	void setAttestedCredentialData(byte[] attestedCredentialData);
-
-	byte[] getAttestationStatement();
-
-	void setAttestationStatement(byte[] attestationStatement);
+	void setAttestationObject(byte[] attestationObject);
 
 	long getCounter();
 
 	Set<AuthenticatorTransport> getTransports();
 
-	Map<String, RegistrationExtensionClientOutput> getClientExtensions();
-	void setClientExtensions(Map<String, RegistrationExtensionClientOutput> clientExtensions) ;
-	Map<String, RegistrationExtensionAuthenticatorOutput> getAuthenticatorExtensions();
-	void setAuthenticatorExtensions(Map<String, RegistrationExtensionAuthenticatorOutput> authenticatorExtensions) ;
+	String getClientExtensions();
+	void setClientExtensions(String clientExtensions);
 
 }

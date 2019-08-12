@@ -16,6 +16,9 @@
 
 package org.springframework.security.webauthn.sample.app.web;
 
+import com.webauthn4j.converter.AttestationObjectConverter;
+import com.webauthn4j.converter.AttestedCredentialDataConverter;
+import com.webauthn4j.converter.AuthenticatorDataConverter;
 import com.webauthn4j.util.Base64UrlUtil;
 import com.webauthn4j.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +77,15 @@ public class WebAuthnSampleController {
 	private WebAuthnChallengeRepository challengeRepository;
 
 	@Autowired
+	private AttestationObjectConverter attestationObjectConverter;
+
+	@Autowired
+	private AuthenticatorDataConverter authenticatorDataConverter;
+
+	@Autowired
+	private AttestedCredentialDataConverter attestedCredentialDataConverter;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@RequestMapping(value = "/")
@@ -124,14 +136,22 @@ public class WebAuthnSampleController {
 		destination.setPassword(passwordEncoder.encode(userCreateForm.getPassword()));
 
 		List<AuthenticatorEntity> authenticators = new ArrayList<>();
+
 		AuthenticatorEntity authenticator = new AuthenticatorEntity();
 		AuthenticatorCreateForm sourceAuthenticator = userCreateForm.getAuthenticator();
+
+		byte[] attestationObject = Base64UrlUtil.decode(sourceAuthenticator.getAttestationObject());
+		byte[] authenticatorData = attestationObjectConverter.extractAuthenticatorData(attestationObject);
+		byte[] attestedCredentialData = authenticatorDataConverter.extractAttestedCredentialData(authenticatorData);
+		byte[] credentialId = attestedCredentialDataConverter.extractCredentialId(attestedCredentialData);
+
 		authenticator.setUser(destination);
+		authenticator.setCredentialId(credentialId);
 		authenticator.setName(null); // sample application doesn't name authenticator
-		authenticator.setAttestationStatement(null); //TODO
-		authenticator.setAttestedCredentialData(null); //TODO
+		authenticator.setAttestationObject(attestationObject);
 		authenticator.setCounter(webAuthnRegistrationRequestVerificationResponse.getAttestationObject().getAuthenticatorData().getSignCount());
 		authenticator.setTransports(sourceAuthenticator.getTransports());
+		authenticator.setClientExtensions(sourceAuthenticator.getClientExtensions());
 		authenticators.add(authenticator);
 
 		destination.setAuthenticators(authenticators);

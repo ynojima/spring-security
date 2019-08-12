@@ -16,6 +16,9 @@
 
 package org.springframework.security.webauthn.sample.app.config;
 
+import com.webauthn4j.converter.AttestationObjectConverter;
+import com.webauthn4j.converter.AttestedCredentialDataConverter;
+import com.webauthn4j.converter.AuthenticatorDataConverter;
 import com.webauthn4j.converter.util.CborConverter;
 import com.webauthn4j.validator.WebAuthnAuthenticationContextValidator;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
@@ -67,6 +70,21 @@ public class WebSecurityBeanConfig {
 			WebAuthnAuthenticationContextValidator webAuthnAuthenticationContextValidator,
 			CborConverter cborConverter){
 		return new WebAuthn4JWebAuthnAuthenticationManager(webAuthnRegistrationContextValidator, webAuthnAuthenticationContextValidator, cborConverter);
+	}
+
+	@Bean
+	public AttestationObjectConverter attestationObjectConverter(CborConverter cborConverter){
+		return new AttestationObjectConverter(cborConverter);
+	}
+
+	@Bean
+	public AuthenticatorDataConverter authenticatorDataConverter(CborConverter cborConverter){
+		return new AuthenticatorDataConverter(cborConverter);
+	}
+
+	@Bean
+	public AttestedCredentialDataConverter attestedCredentialDataConverter(CborConverter cborConverter){
+		return new AttestedCredentialDataConverter(cborConverter);
 	}
 
 	@Bean

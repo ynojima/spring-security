@@ -13,9 +13,9 @@ public class  WebAuthnAuthenticatorImpl implements WebAuthnAuthenticator {
 	// ~ Instance fields
 	// ================================================================================================
 	private String name;
-	private byte[] attestedCredentialData;
-	private byte[] attestationStatement;
+	private byte[] attestationObject;
 	private long counter;
+	private String clientExtensions;
 
 	// ~ Constructor
 	// ========================================================================================================
@@ -24,14 +24,12 @@ public class  WebAuthnAuthenticatorImpl implements WebAuthnAuthenticator {
 	 * Constructor
 	 *
 	 * @param name                   authenticator's friendly name
-	 * @param attestedCredentialData attested credential data
-	 * @param attestationStatement   attestation statement
+	 * @param attestationObject   attestation object
 	 * @param counter                counter
 	 */
-	public WebAuthnAuthenticatorImpl(String name, byte[] attestedCredentialData, byte[] attestationStatement, long counter) {
+	public WebAuthnAuthenticatorImpl(String name, byte[] attestationObject, long counter) {
 		this.name = name;
-		this.attestedCredentialData = attestedCredentialData;
-		this.attestationStatement = attestationStatement;
+		this.attestationObject = attestationObject;
 		this.counter = counter;
 	}
 
@@ -51,24 +49,22 @@ public class  WebAuthnAuthenticatorImpl implements WebAuthnAuthenticator {
 		this.name = name;
 	}
 
-	public byte[] getAttestedCredentialData() {
-		return attestedCredentialData;
+	@Override
+	public byte[] getAttestationObject() {
+		return attestationObject;
 	}
 
-	public void setAttestedCredentialData(byte[] attestedCredentialData) {
-		this.attestedCredentialData = attestedCredentialData;
-	}
-
-	public byte[] getAttestationStatement() {
-		return attestationStatement;
-	}
-
-	public void setAttestationStatement(byte[] attestationStatement) {
-		this.attestationStatement = attestationStatement;
+	@Override
+	public void setAttestationObject(byte[] attestationObject) {
+		this.attestationObject = attestationObject;
 	}
 
 	public long getCounter() {
 		return counter;
+	}
+
+	public void setCounter(long counter) {
+		this.counter = counter;
 	}
 
 	@Override
@@ -77,27 +73,13 @@ public class  WebAuthnAuthenticatorImpl implements WebAuthnAuthenticator {
 	}
 
 	@Override
-	public Map<String, RegistrationExtensionClientOutput> getClientExtensions() {
-		return null;
+	public String getClientExtensions() {
+		return clientExtensions;
 	}
 
 	@Override
-	public void setClientExtensions(Map<String, RegistrationExtensionClientOutput> clientExtensions) {
-
-	}
-
-	@Override
-	public Map<String, RegistrationExtensionAuthenticatorOutput> getAuthenticatorExtensions() {
-		return null;
-	}
-
-	@Override
-	public void setAuthenticatorExtensions(Map<String, RegistrationExtensionAuthenticatorOutput> authenticatorExtensions) {
-
-	}
-
-	public void setCounter(long counter) {
-		this.counter = counter;
+	public void setClientExtensions(String clientExtensions) {
+		this.clientExtensions = clientExtensions;
 	}
 
 	/**

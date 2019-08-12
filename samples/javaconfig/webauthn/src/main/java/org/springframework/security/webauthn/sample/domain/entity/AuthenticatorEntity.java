@@ -17,11 +17,8 @@
 package org.springframework.security.webauthn.sample.domain.entity;
 
 import com.webauthn4j.data.AuthenticatorTransport;
-import com.webauthn4j.data.extension.authenticator.RegistrationExtensionAuthenticatorOutput;
-import com.webauthn4j.data.extension.client.RegistrationExtensionClientOutput;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -30,22 +27,13 @@ import java.util.Set;
 public class AuthenticatorEntity implements WebAuthnAuthenticator {
 
 	private Integer id;
-
+	private byte[] credentialId;
 	private String name;
-
 	private UserEntity user;
-
 	private long counter;
-
 	private Set<AuthenticatorTransport> transports;
-
-	private byte[] attestedCredentialData;
-
-	private byte[] attestationStatement;
-
-	private Map<String, RegistrationExtensionClientOutput> clientExtensions;
-
-	private Map<String, RegistrationExtensionAuthenticatorOutput> authenticatorExtensions;
+	private byte[] attestationObject;
+	private String clientExtensions;
 
 	public Integer getId() {
 		return id;
@@ -53,6 +41,15 @@ public class AuthenticatorEntity implements WebAuthnAuthenticator {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	@Override
+	public byte[] getCredentialId() {
+		return credentialId;
+	}
+
+	public void setCredentialId(byte[] credentialId){
+		this.credentialId = credentialId;
 	}
 
 	public String getName() {
@@ -80,11 +77,6 @@ public class AuthenticatorEntity implements WebAuthnAuthenticator {
 	}
 
 	@Override
-	public byte[] getCredentialId() {
-		return new byte[0];
-	}
-
-	@Override
 	public Set<AuthenticatorTransport> getTransports() {
 		return transports;
 	}
@@ -93,39 +85,23 @@ public class AuthenticatorEntity implements WebAuthnAuthenticator {
 		this.transports = transports;
 	}
 
-	public byte[] getAttestedCredentialData() {
-		return attestedCredentialData;
-	}
-
-	public void setAttestedCredentialData(byte[] attestedCredentialData) {
-		this.attestedCredentialData = attestedCredentialData;
-	}
-
-	public byte[] getAttestationStatement() {
-		return attestationStatement;
-	}
-
-	public void setAttestationStatement(byte[] attestationStatement) {
-		this.attestationStatement = attestationStatement;
+	@Override
+	public byte[] getAttestationObject() {
+		return attestationObject;
 	}
 
 	@Override
-	public Map<String, RegistrationExtensionClientOutput> getClientExtensions() {
+	public void setAttestationObject(byte[] attestationObject) {
+		this.attestationObject = attestationObject;
+	}
+
+	@Override
+	public String getClientExtensions() {
 		return clientExtensions;
 	}
 
 	@Override
-	public void setClientExtensions(Map<String, RegistrationExtensionClientOutput> clientExtensions) {
+	public void setClientExtensions(String clientExtensions) {
 		this.clientExtensions = clientExtensions;
-	}
-
-	@Override
-	public Map<String, RegistrationExtensionAuthenticatorOutput> getAuthenticatorExtensions() {
-		return authenticatorExtensions;
-	}
-
-	@Override
-	public void setAuthenticatorExtensions(Map<String, RegistrationExtensionAuthenticatorOutput> authenticatorExtensions) {
-		this.authenticatorExtensions = authenticatorExtensions;
 	}
 }
