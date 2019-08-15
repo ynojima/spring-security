@@ -16,7 +16,6 @@
 
 package org.springframework.security.webauthn.challenge;
 
-import com.webauthn4j.data.client.challenge.Challenge;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.util.Assert;
 
@@ -73,7 +72,7 @@ public class HttpSessionWebAuthnChallengeRepository implements WebAuthnChallenge
 	}
 
 	/**
-	 * Sets the {@link HttpSession} attribute name that the {@link Challenge} is stored in
+	 * Sets the {@link HttpSession} attribute name that the {@link WebAuthnChallenge} is stored in
 	 *
 	 * @param sessionAttributeName the new attribute name to use
 	 */

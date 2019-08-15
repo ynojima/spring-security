@@ -17,12 +17,10 @@
 package org.springframework.security.webauthn.server;
 
 
-import com.webauthn4j.server.ServerProperty;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Provides {@link ServerProperty} instance associated with {@link HttpServletRequest}
+ * Provides {@link WebAuthnServerProperty} instance associated with {@link HttpServletRequest}
  *
  * @author Yoshikazu Nojima
  */

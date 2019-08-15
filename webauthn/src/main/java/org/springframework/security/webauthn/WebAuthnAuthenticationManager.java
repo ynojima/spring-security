@@ -6,7 +6,7 @@ import org.springframework.security.webauthn.request.WebAuthnRegistrationRequest
 
 public interface WebAuthnAuthenticationManager {
 
-	WebAuthnRegistrationRequestVerificationResponse verifyRegistrationRequest(WebAuthnRegistrationRequest webAuthnRegistrationRequest);
+	void verifyRegistrationRequest(WebAuthnRegistrationRequest webAuthnRegistrationRequest);
 	void verifyAuthenticationRequest(WebAuthnAuthenticationRequest authenticationContext, WebAuthnAuthenticator authenticator);
 
 }

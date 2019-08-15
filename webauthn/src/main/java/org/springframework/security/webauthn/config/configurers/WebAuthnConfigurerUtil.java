@@ -88,7 +88,7 @@ public class WebAuthnConfigurerUtil {
 		WebAuthnServerPropertyProvider webAuthnServerPropertyProvider;
 		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnServerPropertyProvider.class);
 		if (beanNames.length == 0) {
-			webAuthnServerPropertyProvider = new WebAuthnServerPropertyProviderImpl(getOrCreateChallengeRepository(http));
+			webAuthnServerPropertyProvider = new WebAuthnServerPropertyProviderImpl(getOrCreateOptionsProvider(http), getOrCreateChallengeRepository(http));
 		} else {
 			webAuthnServerPropertyProvider = applicationContext.getBean(WebAuthnServerPropertyProvider.class);
 		}

@@ -24,7 +24,7 @@ public class WebAuthnRegistrationRequestValidator {
 		this.webAuthnServerPropertyProvider = webAuthnServerPropertyProvider;
 	}
 
-	public WebAuthnRegistrationRequestVerificationResponse validate(
+	public void validate(
 			HttpServletRequest httpServletRequest,
 			String clientDataBase64url,
 			String attestationObjectBase64url,
@@ -37,7 +37,7 @@ public class WebAuthnRegistrationRequestValidator {
 		WebAuthnRegistrationRequest webAuthnRegistrationRequest =
 				new WebAuthnRegistrationRequest(clientDataBase64url, attestationObjectBase64url, transports, clientExtensionsJSON, webAuthnServerProperty, expectedRegistrationExtensionIds);
 
-		return webAuthnAuthenticationManager.verifyRegistrationRequest(webAuthnRegistrationRequest);
+		webAuthnAuthenticationManager.verifyRegistrationRequest(webAuthnRegistrationRequest);
 	}
 
 	public List<String> getExpectedRegistrationExtensionIds() {

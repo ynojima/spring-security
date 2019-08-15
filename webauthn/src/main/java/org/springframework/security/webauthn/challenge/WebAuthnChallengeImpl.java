@@ -3,8 +3,8 @@ package org.springframework.security.webauthn.challenge;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.webauthn4j.util.ArrayUtil;
-import com.webauthn4j.util.AssertUtil;
 import com.webauthn4j.util.Base64UrlUtil;
+import org.springframework.util.Assert;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -19,12 +19,12 @@ public class WebAuthnChallengeImpl implements WebAuthnChallenge {
 	 * @param value the value of the challenge
 	 */
 	public WebAuthnChallengeImpl(byte[] value) {
-		AssertUtil.notNull(value, "value cannot be null");
+		Assert.notNull(value, "value cannot be null");
 		this.value = value;
 	}
 
 	public WebAuthnChallengeImpl(String base64urlString) {
-		AssertUtil.notNull(base64urlString, "base64urlString cannot be null");
+		Assert.notNull(base64urlString, "base64urlString cannot be null");
 		this.value = Base64UrlUtil.decode(base64urlString);
 	}
 

@@ -7,21 +7,22 @@ import com.webauthn4j.data.AuthenticatorTransport;
 import com.webauthn4j.data.WebAuthnAuthenticationContext;
 import com.webauthn4j.data.WebAuthnRegistrationContext;
 import com.webauthn4j.data.attestation.AttestationObject;
+import com.webauthn4j.data.client.Origin;
+import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.util.Base64UrlUtil;
 import com.webauthn4j.util.exception.WebAuthnException;
 import com.webauthn4j.validator.WebAuthnAuthenticationContextValidator;
-import com.webauthn4j.validator.WebAuthnRegistrationContextValidationResponse;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 import org.springframework.security.webauthn.request.WebAuthnAuthenticationRequest;
 import org.springframework.security.webauthn.request.WebAuthnRegistrationRequest;
+import org.springframework.security.webauthn.server.WebAuthnOrigin;
+import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 import org.springframework.security.webauthn.util.ExceptionUtil;
-import org.springframework.security.webauthn.util.WebAuthn4JUtil;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenticationManager {
@@ -33,9 +34,6 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 
 	private CborConverter cborConverter;
 
-	private String rpId; //TODO
-	private List<String> expectedRegistrationExtensionIds;
-
 	public WebAuthn4JWebAuthnAuthenticationManager(
 			WebAuthnRegistrationContextValidator registrationContextValidator,
 			WebAuthnAuthenticationContextValidator authenticationContextValidator,
@@ -45,28 +43,21 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 		this.cborConverter = cborConverter;
 	}
 
-	public WebAuthnRegistrationRequestVerificationResponse verifyRegistrationRequest(
+	public void verifyRegistrationRequest(
 			WebAuthnRegistrationRequest webAuthnRegistrationRequest
 	) {
 
 		Assert.hasText(webAuthnRegistrationRequest.getClientDataBase64url(), "clientDataBase64url must have text");
 		Assert.hasText(webAuthnRegistrationRequest.getAttestationObjectBase64url(), "attestationObjectBase64url must have text");
-		Assert.notNull(webAuthnRegistrationRequest.getTransports(), "transports must not be null");
 		if (webAuthnRegistrationRequest.getTransports() != null) {
 			webAuthnRegistrationRequest.getTransports().forEach(transport -> Assert.hasText(transport, "each transport must have text"));
 		}
-		Assert.hasText(webAuthnRegistrationRequest.getClientExtensionsJSON(), "clientExtensionsJSON must have text");
 		Assert.notNull(webAuthnRegistrationRequest.getServerProperty(), "serverProperty must not be null");
-		Assert.notNull(webAuthnRegistrationRequest.getExpectedRegistrationExtensionIds(), "expectedRegistrationExtensionIds must not be null");
 
 		WebAuthnRegistrationContext registrationContext = createRegistrationContext(webAuthnRegistrationRequest);
 
 		try {
-			WebAuthnRegistrationContextValidationResponse response = registrationContextValidator.validate(registrationContext);
-			return new WebAuthnRegistrationRequestVerificationResponse(
-					response.getCollectedClientData(),
-					response.getAttestationObject(),
-					response.getRegistrationExtensionsClientOutputs());
+			registrationContextValidator.validate(registrationContext);
 		} catch (WebAuthnException e) {
 			throw ExceptionUtil.wrapWithAuthenticationException(e);
 		}
@@ -99,22 +90,13 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 
 	}
 
-
-	public List<String> getExpectedRegistrationExtensionIds() {
-		return expectedRegistrationExtensionIds;
-	}
-
-	public void setExpectedRegistrationExtensionIds(List<String> expectedRegistrationExtensionIds) {
-		this.expectedRegistrationExtensionIds = expectedRegistrationExtensionIds;
-	}
-
 	private WebAuthnRegistrationContext createRegistrationContext(WebAuthnRegistrationRequest webAuthnRegistrationRequest) {
 
 		byte[] clientDataBytes = Base64UrlUtil.decode(webAuthnRegistrationRequest.getClientDataBase64url());
 		byte[] attestationObjectBytes = Base64UrlUtil.decode(webAuthnRegistrationRequest.getAttestationObjectBase64url());
 		Set<String> transports = webAuthnRegistrationRequest.getTransports();
 		String clientExtensionsJSON = webAuthnRegistrationRequest.getClientExtensionsJSON();
-		ServerProperty serverProperty = WebAuthn4JUtil.convertToServerProperty(webAuthnRegistrationRequest.getServerProperty());
+		ServerProperty serverProperty = convertToServerProperty(webAuthnRegistrationRequest.getServerProperty());
 
 		return new WebAuthnRegistrationContext(
 				clientDataBytes,
@@ -124,12 +106,12 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 				serverProperty,
 				false,
 				false,
-				expectedRegistrationExtensionIds);
+				webAuthnRegistrationRequest.getExpectedRegistrationExtensionIds());
 	}
 
 	private WebAuthnAuthenticationContext createWebAuthnAuthenticationContext(WebAuthnAuthenticationRequest webAuthnAuthenticationRequest) {
 
-		ServerProperty serverProperty = WebAuthn4JUtil.convertToServerProperty(webAuthnAuthenticationRequest.getServerProperty());
+		ServerProperty serverProperty = convertToServerProperty(webAuthnAuthenticationRequest.getServerProperty());
 
 		return new WebAuthnAuthenticationContext(
 				webAuthnAuthenticationRequest.getCredentialId(),
@@ -142,6 +124,18 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 				webAuthnAuthenticationRequest.isUserPresenceRequired(),
 				webAuthnAuthenticationRequest.getExpectedAuthenticationExtensionIds()
 		);
+	}
+
+	private Origin convertToOrigin(WebAuthnOrigin webAuthnOrigin) {
+		return new Origin(webAuthnOrigin.getScheme(), webAuthnOrigin.getHost(), webAuthnOrigin.getPort());
+	}
+
+	private ServerProperty convertToServerProperty(WebAuthnServerProperty webAuthnServerProperty) {
+		return new ServerProperty(
+				convertToOrigin(webAuthnServerProperty.getOrigin()),
+				webAuthnServerProperty.getRpId(),
+				new DefaultChallenge(webAuthnServerProperty.getChallenge().getValue()),
+				webAuthnServerProperty.getTokenBindingId());
 	}
 
 }

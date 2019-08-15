@@ -26,9 +26,7 @@ import org.springframework.security.authentication.MultiFactorAuthenticationToke
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.webauthn.WebAuthnAuthenticationManager;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
-import org.springframework.security.webauthn.WebAuthnRegistrationRequestVerificationResponse;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.exception.ValidationException;
 import org.springframework.security.webauthn.sample.domain.entity.AuthenticatorEntity;
@@ -116,9 +114,8 @@ public class WebAuthnSampleController {
 		if (result.hasErrors()) {
 			return VIEW_SIGNUP_SIGNUP;
 		}
-		WebAuthnRegistrationRequestVerificationResponse webAuthnRegistrationRequestVerificationResponse;
 		try {
-			webAuthnRegistrationRequestVerificationResponse = registrationRequestValidator.validate(
+			registrationRequestValidator.validate(
 					request,
 					userCreateForm.getAuthenticator().getClientDataJSON(),
 					userCreateForm.getAuthenticator().getAttestationObject(),
@@ -144,12 +141,13 @@ public class WebAuthnSampleController {
 		byte[] authenticatorData = attestationObjectConverter.extractAuthenticatorData(attestationObject);
 		byte[] attestedCredentialData = authenticatorDataConverter.extractAttestedCredentialData(authenticatorData);
 		byte[] credentialId = attestedCredentialDataConverter.extractCredentialId(attestedCredentialData);
+		long signCount = 0; //TODO: authenticatorDataConverter.extractSignCount(authenticatorData);
 
 		authenticator.setUser(destination);
 		authenticator.setCredentialId(credentialId);
 		authenticator.setName(null); // sample application doesn't name authenticator
 		authenticator.setAttestationObject(attestationObject);
-		authenticator.setCounter(webAuthnRegistrationRequestVerificationResponse.getAttestationObject().getAuthenticatorData().getSignCount());
+		authenticator.setCounter(signCount);
 		authenticator.setTransports(sourceAuthenticator.getTransports());
 		authenticator.setClientExtensions(sourceAuthenticator.getClientExtensions());
 		authenticators.add(authenticator);
