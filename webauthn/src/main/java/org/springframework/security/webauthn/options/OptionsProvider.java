@@ -47,13 +47,5 @@ public interface OptionsProvider {
 	 */
 	AssertionOptions getAssertionOptions(HttpServletRequest request, String username, WebAuthnChallenge challenge);
 
-	/**
-	 * returns effective rpId based on request origin and configured <code>rpId</code>.
-	 *
-	 * @param request request
-	 * @return effective rpId
-	 */
-	String getEffectiveRpId(HttpServletRequest request);
-
 
 }

@@ -33,7 +33,7 @@ import org.springframework.security.webauthn.WebAuthnAuthenticationManager;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
 import org.springframework.security.webauthn.challenge.HttpSessionWebAuthnChallengeRepository;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
-import org.springframework.security.webauthn.options.OptionsProvider;
+import org.springframework.security.webauthn.server.EffectiveRpIdProvider;
 import org.springframework.security.webauthn.options.OptionsProviderImpl;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProviderImpl;
@@ -43,13 +43,13 @@ import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsServ
 public class WebSecurityBeanConfig {
 
 	@Bean
-	public OptionsProvider optionsProvider(WebAuthnUserDetailsService userDetailsService, WebAuthnChallengeRepository challengeRepository){
+	public OptionsProviderImpl optionsProviderImpl(WebAuthnUserDetailsService userDetailsService, WebAuthnChallengeRepository challengeRepository){
 		return new OptionsProviderImpl(userDetailsService, challengeRepository);
 	}
 
 	@Bean
-	public WebAuthnServerPropertyProvider webAuthnServerPropertyProvider(OptionsProvider optionsProvider, WebAuthnChallengeRepository webAuthnChallengeRepository){
-		return new WebAuthnServerPropertyProviderImpl(optionsProvider, webAuthnChallengeRepository);
+	public WebAuthnServerPropertyProvider webAuthnServerPropertyProvider(EffectiveRpIdProvider effectiveRpIdProvider, WebAuthnChallengeRepository webAuthnChallengeRepository){
+		return new WebAuthnServerPropertyProviderImpl(effectiveRpIdProvider, webAuthnChallengeRepository);
 	}
 
 	@Bean

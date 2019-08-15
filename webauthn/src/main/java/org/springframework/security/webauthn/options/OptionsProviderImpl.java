@@ -16,12 +16,12 @@
 
 package org.springframework.security.webauthn.options;
 
-import com.webauthn4j.authenticator.Authenticator;
 import com.webauthn4j.data.*;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
+import org.springframework.security.webauthn.server.EffectiveRpIdProvider;
 import org.springframework.security.webauthn.server.WebAuthnOrigin;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  *
  * @author Yoshikazu Nojima
  */
-public class OptionsProviderImpl implements OptionsProvider {
+public class OptionsProviderImpl implements OptionsProvider, EffectiveRpIdProvider {
 
 	//~ Instance fields
 	// ================================================================================================
