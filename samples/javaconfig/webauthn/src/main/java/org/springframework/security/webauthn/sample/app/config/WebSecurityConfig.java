@@ -37,6 +37,7 @@ import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsServ
 
 import static org.springframework.security.webauthn.config.configurers.WebAuthnLoginConfigurer.webAuthnLogin;
 
+
 /**
  * Security Configuration
  */
@@ -81,12 +82,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// WebAuthn Login
 		http.apply(webAuthnLogin())
-				.rpName("Spring Security WebAuthn Sample")
-				.attestation(AttestationConveyancePreference.NONE)
-				.publicKeyCredParams()
-				.addPublicKeyCredParams(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS256)  // Windows Hello
-				.addPublicKeyCredParams(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES256) // FIDO U2F Key, etc
-				.and()
 				.loginPage("/login")
 				.usernameParameter("username")
 				.passwordParameter("password")
@@ -112,5 +107,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
 	}
+
 
 }

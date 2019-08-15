@@ -22,6 +22,7 @@ import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 import org.springframework.security.webauthn.util.ExceptionUtil;
 import org.springframework.util.Assert;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 	// ================================================================================================
 	private WebAuthnRegistrationContextValidator registrationContextValidator;
 	private WebAuthnAuthenticationContextValidator authenticationContextValidator;
+
+	private String rpId;
 
 	private CborConverter cborConverter;
 
@@ -138,4 +141,15 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 				webAuthnServerProperty.getTokenBindingId());
 	}
 
+	@Override
+	public String getEffectiveRpId(HttpServletRequest request) {
+		String effectiveRpId;
+		if (this.rpId != null) {
+			effectiveRpId = this.rpId;
+		} else {
+			WebAuthnOrigin origin = WebAuthnOrigin.create(request);
+			effectiveRpId = origin.getHost();
+		}
+		return effectiveRpId;
+	}
 }

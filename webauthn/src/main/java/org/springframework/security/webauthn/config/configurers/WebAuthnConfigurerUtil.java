@@ -28,9 +28,6 @@ import org.springframework.security.webauthn.WebAuthnAuthenticationManager;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
 import org.springframework.security.webauthn.challenge.HttpSessionWebAuthnChallengeRepository;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
-import org.springframework.security.webauthn.server.EffectiveRpIdProvider;
-import org.springframework.security.webauthn.options.OptionsProvider;
-import org.springframework.security.webauthn.options.OptionsProviderImpl;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProviderImpl;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
@@ -55,35 +52,6 @@ public class WebAuthnConfigurerUtil {
 		return webAuthnChallengeRepository;
 	}
 
-	public static <H extends HttpSecurityBuilder<H>> OptionsProvider getOrCreateOptionsProvider(H http) {
-		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		OptionsProvider optionsProvider;
-		String[] beanNames = applicationContext.getBeanNamesForType(OptionsProvider.class);
-		if (beanNames.length == 0) {
-			WebAuthnUserDetailsService userDetailsService = getWebAuthnUserDetailsService(http);
-			WebAuthnChallengeRepository webAuthnChallengeRepository = getOrCreateChallengeRepository(http);
-			optionsProvider = new OptionsProviderImpl(userDetailsService, webAuthnChallengeRepository);
-		} else {
-			optionsProvider = applicationContext.getBean(OptionsProvider.class);
-		}
-		return optionsProvider;
-	}
-
-	public static <H extends HttpSecurityBuilder<H>> EffectiveRpIdProvider getOrCreateEffectiveRpIdProvider(H http) {
-		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		EffectiveRpIdProvider effectiveRpIdProvider;
-		String[] beanNames = applicationContext.getBeanNamesForType(EffectiveRpIdProvider.class);
-		if (beanNames.length == 0) {
-			WebAuthnUserDetailsService userDetailsService = getWebAuthnUserDetailsService(http);
-			WebAuthnChallengeRepository webAuthnChallengeRepository = getOrCreateChallengeRepository(http);
-			effectiveRpIdProvider = new OptionsProviderImpl(userDetailsService, webAuthnChallengeRepository);
-		} else {
-			effectiveRpIdProvider = applicationContext.getBean(EffectiveRpIdProvider.class);
-		}
-		return effectiveRpIdProvider;
-	}
-
-
 	public static <H extends HttpSecurityBuilder<H>> JsonConverter getOrCreateJsonConverter(H http) {
 		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
 		JsonConverter jsonConverter;
@@ -103,7 +71,7 @@ public class WebAuthnConfigurerUtil {
 		WebAuthnServerPropertyProvider webAuthnServerPropertyProvider;
 		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnServerPropertyProvider.class);
 		if (beanNames.length == 0) {
-			webAuthnServerPropertyProvider = new WebAuthnServerPropertyProviderImpl(getOrCreateEffectiveRpIdProvider(http), getOrCreateChallengeRepository(http));
+			webAuthnServerPropertyProvider = new WebAuthnServerPropertyProviderImpl(getOrCreateWebAuthnAuthenticationManager(http), getOrCreateChallengeRepository(http));
 		} else {
 			webAuthnServerPropertyProvider = applicationContext.getBean(WebAuthnServerPropertyProvider.class);
 		}
