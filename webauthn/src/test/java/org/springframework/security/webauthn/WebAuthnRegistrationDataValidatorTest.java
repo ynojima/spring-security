@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test for WebAuthnRegistrationContextValidator
  */
-public class WebAuthnRegistrationRequestValidatorTest {
+public class WebAuthnRegistrationDataValidatorTest {
 
 	@Rule
 	public MockitoRule mockito = MockitoJUnit.rule();

@@ -25,12 +25,13 @@ import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.test.TestDataUtil;
 import org.junit.Test;
+import org.springframework.security.webauthn.WebAuthnAuthenticationData;
 
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WebAuthnAuthenticationRequestTest {
+public class WebAuthnAuthenticationDataTest {
 
 	private CborConverter cborConverter = new CborConverter();
 
@@ -45,7 +46,7 @@ public class WebAuthnAuthenticationRequestTest {
 				challenge,
 				new byte[]{0x43, 0x21}
 		);
-		WebAuthnAuthenticationRequest request = new WebAuthnAuthenticationRequest(
+		WebAuthnAuthenticationData request = new WebAuthnAuthenticationData(
 				new byte[]{0x01, 0x23},
 				clientDataJSON,
 				authenticatorData,
@@ -72,7 +73,7 @@ public class WebAuthnAuthenticationRequestTest {
 		Challenge challenge = new DefaultChallenge();
 		byte[] clientDataJSON = TestDataUtil.createClientDataJSON(ClientDataType.GET);
 		byte[] authenticatorData = new AuthenticatorDataConverter(cborConverter).convert(TestDataUtil.createAuthenticatorData());
-		WebAuthnAuthenticationRequest requestA = new WebAuthnAuthenticationRequest(
+		WebAuthnAuthenticationData requestA = new WebAuthnAuthenticationData(
 				new byte[]{0x01, 0x23},
 				clientDataJSON,
 				authenticatorData,
@@ -87,7 +88,7 @@ public class WebAuthnAuthenticationRequestTest {
 				true,
 				Collections.singletonList("uvi")
 		);
-		WebAuthnAuthenticationRequest requestB = new WebAuthnAuthenticationRequest(
+		WebAuthnAuthenticationData requestB = new WebAuthnAuthenticationData(
 				new byte[]{0x01, 0x23},
 				clientDataJSON,
 				authenticatorData,

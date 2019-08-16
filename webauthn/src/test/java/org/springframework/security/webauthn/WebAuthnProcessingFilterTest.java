@@ -32,7 +32,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.webauthn.request.WebAuthnAuthenticationRequest;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 
 import java.util.Collections;
@@ -116,7 +115,7 @@ public class WebAuthnProcessingFilterTest {
 		WebAuthnAssertionAuthenticationToken authenticationToken = (WebAuthnAssertionAuthenticationToken) captor.getValue();
 		verify(webAuthnServerPropertyProvider).provide(mockHttpServletRequest);
 		assertThat(authenticationToken.getPrincipal()).isNull();
-		assertThat(authenticationToken.getCredentials()).isInstanceOf(WebAuthnAuthenticationRequest.class);
+		assertThat(authenticationToken.getCredentials()).isInstanceOf(WebAuthnAuthenticationData.class);
 		assertThat(authenticationToken.getCredentials().getCredentialId()).isEqualTo(Base64UrlUtil.decode(credentialId));
 		assertThat(authenticationToken.getCredentials().getClientDataJSON()).isEqualTo(Base64UrlUtil.decode(clientDataJSON));
 		assertThat(authenticationToken.getCredentials().getAuthenticatorData()).isEqualTo(Base64UrlUtil.decode(authenticatorData));
@@ -157,7 +156,7 @@ public class WebAuthnProcessingFilterTest {
 		WebAuthnAssertionAuthenticationToken authenticationToken = (WebAuthnAssertionAuthenticationToken) captor.getValue();
 		verify(webAuthnServerPropertyProvider).provide(mockHttpServletRequest);
 		assertThat(authenticationToken.getPrincipal()).isNull();
-		assertThat(authenticationToken.getCredentials()).isInstanceOf(WebAuthnAuthenticationRequest.class);
+		assertThat(authenticationToken.getCredentials()).isInstanceOf(WebAuthnAuthenticationData.class);
 		assertThat(authenticationToken.getCredentials().getCredentialId()).isEqualTo(Base64UrlUtil.decode(credentialId));
 		assertThat(authenticationToken.getCredentials().getClientDataJSON()).isEqualTo(Base64UrlUtil.decode(clientDataJSON));
 		assertThat(authenticationToken.getCredentials().getAuthenticatorData()).isEqualTo(Base64UrlUtil.decode(authenticatorData));
@@ -226,7 +225,7 @@ public class WebAuthnProcessingFilterTest {
 		WebAuthnAssertionAuthenticationToken authenticationToken = (WebAuthnAssertionAuthenticationToken) captor.getValue();
 		verify(webAuthnServerPropertyProvider).provide(mockHttpServletRequest);
 		assertThat(authenticationToken.getPrincipal()).isNull();
-		assertThat(authenticationToken.getCredentials()).isInstanceOf(WebAuthnAuthenticationRequest.class);
+		assertThat(authenticationToken.getCredentials()).isInstanceOf(WebAuthnAuthenticationData.class);
 		assertThat(authenticationToken.getCredentials().getCredentialId()).isEqualTo(Base64UrlUtil.decode(credentialId));
 		assertThat(authenticationToken.getCredentials().getClientDataJSON()).isEqualTo(Base64UrlUtil.decode(clientDataJSON));
 		assertThat(authenticationToken.getCredentials().getAuthenticatorData()).isEqualTo(Base64UrlUtil.decode(authenticatorData));

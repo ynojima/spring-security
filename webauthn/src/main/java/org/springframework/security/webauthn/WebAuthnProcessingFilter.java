@@ -24,7 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.webauthn.request.WebAuthnAuthenticationRequest;
 import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.util.Assert;
@@ -138,7 +137,7 @@ public class WebAuthnProcessingFilter extends UsernamePasswordAuthenticationFilt
 
 			WebAuthnServerProperty webAuthnServerProperty = serverPropertyProvider.provide(request);
 
-			WebAuthnAuthenticationRequest webAuthnAuthenticationRequest = new WebAuthnAuthenticationRequest(
+			WebAuthnAuthenticationData webAuthnAuthenticationData = new WebAuthnAuthenticationData(
 					rawId,
 					rawClientData,
 					rawAuthenticatorData,
@@ -148,7 +147,7 @@ public class WebAuthnProcessingFilter extends UsernamePasswordAuthenticationFilt
 					true,
 					expectedAuthenticationExtensionIds
 			);
-			authRequest = new WebAuthnAssertionAuthenticationToken(webAuthnAuthenticationRequest);
+			authRequest = new WebAuthnAssertionAuthenticationToken(webAuthnAuthenticationData);
 		}
 
 		// Allow subclasses to set the "details" property

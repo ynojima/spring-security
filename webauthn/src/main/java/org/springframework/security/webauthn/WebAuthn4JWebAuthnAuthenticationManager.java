@@ -15,8 +15,6 @@ import com.webauthn4j.util.exception.WebAuthnException;
 import com.webauthn4j.validator.WebAuthnAuthenticationContextValidator;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
-import org.springframework.security.webauthn.request.WebAuthnAuthenticationRequest;
-import org.springframework.security.webauthn.request.WebAuthnRegistrationRequest;
 import org.springframework.security.webauthn.server.WebAuthnOrigin;
 import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 import org.springframework.security.webauthn.util.ExceptionUtil;
@@ -47,18 +45,18 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 		this.cborConverter = cborConverter;
 	}
 
-	public void verifyRegistrationRequest(
-			WebAuthnRegistrationRequest webAuthnRegistrationRequest
+	public void verifyRegistrationData(
+			WebAuthnRegistrationData registrationData
 	) {
 
-		Assert.hasText(webAuthnRegistrationRequest.getClientDataBase64url(), "clientDataBase64url must have text");
-		Assert.hasText(webAuthnRegistrationRequest.getAttestationObjectBase64url(), "attestationObjectBase64url must have text");
-		if (webAuthnRegistrationRequest.getTransports() != null) {
-			webAuthnRegistrationRequest.getTransports().forEach(transport -> Assert.hasText(transport, "each transport must have text"));
+		Assert.hasText(registrationData.getClientDataBase64url(), "clientDataBase64url must have text");
+		Assert.hasText(registrationData.getAttestationObjectBase64url(), "attestationObjectBase64url must have text");
+		if (registrationData.getTransports() != null) {
+			registrationData.getTransports().forEach(transport -> Assert.hasText(transport, "each transport must have text"));
 		}
-		Assert.notNull(webAuthnRegistrationRequest.getServerProperty(), "serverProperty must not be null");
+		Assert.notNull(registrationData.getServerProperty(), "serverProperty must not be null");
 
-		WebAuthnRegistrationContext registrationContext = createRegistrationContext(webAuthnRegistrationRequest);
+		WebAuthnRegistrationContext registrationContext = createRegistrationContext(registrationData);
 
 		try {
 			registrationContextValidator.validate(registrationContext);
@@ -68,11 +66,11 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 	}
 
 	@Override
-	public void verifyAuthenticationRequest(WebAuthnAuthenticationRequest webAuthnAuthenticationRequest, WebAuthnAuthenticator webAuthnAuthenticator) {
+	public void verifyAuthenticationData(WebAuthnAuthenticationData authenticationData, WebAuthnAuthenticator webAuthnAuthenticator) {
 
 		//TODO: null check
 
-		WebAuthnAuthenticationContext authenticationContext = createWebAuthnAuthenticationContext(webAuthnAuthenticationRequest);
+		WebAuthnAuthenticationContext authenticationContext = createWebAuthnAuthenticationContext(authenticationData);
 
 		AttestationObject attestationObject = cborConverter.readValue(webAuthnAuthenticator.getAttestationObject(), AttestationObject.class);
 
@@ -121,13 +119,13 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 		this.rpId = rpId;
 	}
 
-	private WebAuthnRegistrationContext createRegistrationContext(WebAuthnRegistrationRequest webAuthnRegistrationRequest) {
+	private WebAuthnRegistrationContext createRegistrationContext(WebAuthnRegistrationData webAuthnRegistrationData) {
 
-		byte[] clientDataBytes = Base64UrlUtil.decode(webAuthnRegistrationRequest.getClientDataBase64url());
-		byte[] attestationObjectBytes = Base64UrlUtil.decode(webAuthnRegistrationRequest.getAttestationObjectBase64url());
-		Set<String> transports = webAuthnRegistrationRequest.getTransports();
-		String clientExtensionsJSON = webAuthnRegistrationRequest.getClientExtensionsJSON();
-		ServerProperty serverProperty = convertToServerProperty(webAuthnRegistrationRequest.getServerProperty());
+		byte[] clientDataBytes = Base64UrlUtil.decode(webAuthnRegistrationData.getClientDataBase64url());
+		byte[] attestationObjectBytes = Base64UrlUtil.decode(webAuthnRegistrationData.getAttestationObjectBase64url());
+		Set<String> transports = webAuthnRegistrationData.getTransports();
+		String clientExtensionsJSON = webAuthnRegistrationData.getClientExtensionsJSON();
+		ServerProperty serverProperty = convertToServerProperty(webAuthnRegistrationData.getServerProperty());
 
 		return new WebAuthnRegistrationContext(
 				clientDataBytes,
@@ -137,23 +135,23 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 				serverProperty,
 				false,
 				false,
-				webAuthnRegistrationRequest.getExpectedRegistrationExtensionIds());
+				webAuthnRegistrationData.getExpectedRegistrationExtensionIds());
 	}
 
-	private WebAuthnAuthenticationContext createWebAuthnAuthenticationContext(WebAuthnAuthenticationRequest webAuthnAuthenticationRequest) {
+	private WebAuthnAuthenticationContext createWebAuthnAuthenticationContext(WebAuthnAuthenticationData webAuthnAuthenticationData) {
 
-		ServerProperty serverProperty = convertToServerProperty(webAuthnAuthenticationRequest.getServerProperty());
+		ServerProperty serverProperty = convertToServerProperty(webAuthnAuthenticationData.getServerProperty());
 
 		return new WebAuthnAuthenticationContext(
-				webAuthnAuthenticationRequest.getCredentialId(),
-				webAuthnAuthenticationRequest.getClientDataJSON(),
-				webAuthnAuthenticationRequest.getAuthenticatorData(),
-				webAuthnAuthenticationRequest.getSignature(),
-				webAuthnAuthenticationRequest.getClientExtensionsJSON(),
+				webAuthnAuthenticationData.getCredentialId(),
+				webAuthnAuthenticationData.getClientDataJSON(),
+				webAuthnAuthenticationData.getAuthenticatorData(),
+				webAuthnAuthenticationData.getSignature(),
+				webAuthnAuthenticationData.getClientExtensionsJSON(),
 				serverProperty,
-				webAuthnAuthenticationRequest.isUserVerificationRequired(),
-				webAuthnAuthenticationRequest.isUserPresenceRequired(),
-				webAuthnAuthenticationRequest.getExpectedAuthenticationExtensionIds()
+				webAuthnAuthenticationData.isUserVerificationRequired(),
+				webAuthnAuthenticationData.isUserPresenceRequired(),
+				webAuthnAuthenticationData.getExpectedAuthenticationExtensionIds()
 		);
 	}
 

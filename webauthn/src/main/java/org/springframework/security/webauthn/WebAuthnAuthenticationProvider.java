@@ -30,7 +30,6 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticatorService;
 import org.springframework.security.webauthn.exception.CredentialIdNotFoundException;
-import org.springframework.security.webauthn.request.WebAuthnAuthenticationRequest;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 import org.springframework.util.Assert;
@@ -92,7 +91,7 @@ public class WebAuthnAuthenticationProvider implements AuthenticationProvider {
 
 		WebAuthnAssertionAuthenticationToken authenticationToken = (WebAuthnAssertionAuthenticationToken) authentication;
 
-		WebAuthnAuthenticationRequest credentials = authenticationToken.getCredentials();
+		WebAuthnAuthenticationData credentials = authenticationToken.getCredentials();
 		if (credentials == null) {
 			logger.debug("Authentication failed: no credentials provided");
 
@@ -140,21 +139,21 @@ public class WebAuthnAuthenticationProvider implements AuthenticationProvider {
 
 	void doAuthenticate(WebAuthnAssertionAuthenticationToken authenticationToken, WebAuthnAuthenticator webAuthnAuthenticator, WebAuthnUserDetails user) {
 
-		WebAuthnAuthenticationRequest webAuthnAuthenticationRequest = authenticationToken.getCredentials();
-		boolean userVerificationRequired = isUserVerificationRequired(user, webAuthnAuthenticationRequest);
-		webAuthnAuthenticationRequest = new WebAuthnAuthenticationRequest(
-				webAuthnAuthenticationRequest.getCredentialId(),
-				webAuthnAuthenticationRequest.getClientDataJSON(),
-				webAuthnAuthenticationRequest.getAuthenticatorData(),
-				webAuthnAuthenticationRequest.getSignature(),
-				webAuthnAuthenticationRequest.getClientExtensionsJSON(),
-				webAuthnAuthenticationRequest.getServerProperty(),
+		WebAuthnAuthenticationData webAuthnAuthenticationData = authenticationToken.getCredentials();
+		boolean userVerificationRequired = isUserVerificationRequired(user, webAuthnAuthenticationData);
+		webAuthnAuthenticationData = new WebAuthnAuthenticationData(
+				webAuthnAuthenticationData.getCredentialId(),
+				webAuthnAuthenticationData.getClientDataJSON(),
+				webAuthnAuthenticationData.getAuthenticatorData(),
+				webAuthnAuthenticationData.getSignature(),
+				webAuthnAuthenticationData.getClientExtensionsJSON(),
+				webAuthnAuthenticationData.getServerProperty(),
 				userVerificationRequired,
-				webAuthnAuthenticationRequest.isUserPresenceRequired(),
-				webAuthnAuthenticationRequest.getExpectedAuthenticationExtensionIds()
+				webAuthnAuthenticationData.isUserPresenceRequired(),
+				webAuthnAuthenticationData.getExpectedAuthenticationExtensionIds()
 		);
 
-		webAuthnAuthenticationManager.verifyAuthenticationRequest(webAuthnAuthenticationRequest, webAuthnAuthenticator);
+		webAuthnAuthenticationManager.verifyAuthenticationData(webAuthnAuthenticationData, webAuthnAuthenticator);
 
 	}
 
@@ -239,7 +238,7 @@ public class WebAuthnAuthenticationProvider implements AuthenticationProvider {
 		return user;
 	}
 
-	boolean isUserVerificationRequired(WebAuthnUserDetails user, WebAuthnAuthenticationRequest credentials) {
+	boolean isUserVerificationRequired(WebAuthnUserDetails user, WebAuthnAuthenticationData credentials) {
 
 		Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
 

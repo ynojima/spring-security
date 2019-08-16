@@ -1,13 +1,10 @@
 package org.springframework.security.webauthn;
 
-import org.springframework.security.webauthn.request.WebAuthnRegistrationRequest;
 import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.util.Assert;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Set;
 
 public class WebAuthnRegistrationRequestValidator {
 
@@ -24,20 +21,22 @@ public class WebAuthnRegistrationRequestValidator {
 		this.webAuthnServerPropertyProvider = webAuthnServerPropertyProvider;
 	}
 
-	public void validate(
-			HttpServletRequest httpServletRequest,
-			String clientDataBase64url,
-			String attestationObjectBase64url,
-			Set<String> transports,
-			String clientExtensionsJSON
-	) {
-		Assert.notNull(httpServletRequest, "httpServletRequest must not be null");
-		WebAuthnServerProperty webAuthnServerProperty = webAuthnServerPropertyProvider.provide(httpServletRequest);
+	public void validate(WebAuthnRegistrationRequest registrationRequest) {
 
-		WebAuthnRegistrationRequest webAuthnRegistrationRequest =
-				new WebAuthnRegistrationRequest(clientDataBase64url, attestationObjectBase64url, transports, clientExtensionsJSON, webAuthnServerProperty, expectedRegistrationExtensionIds);
+		Assert.notNull(registrationRequest, "target must not be null");
+		Assert.notNull(registrationRequest.getHttpServletRequest(),  "httpServletRequest must not be null");
 
-		webAuthnAuthenticationManager.verifyRegistrationRequest(webAuthnRegistrationRequest);
+		WebAuthnServerProperty webAuthnServerProperty = webAuthnServerPropertyProvider.provide(registrationRequest.getHttpServletRequest());
+
+		WebAuthnRegistrationData webAuthnRegistrationData =	new WebAuthnRegistrationData(
+				registrationRequest.getClientDataBase64url(),
+				registrationRequest.getAttestationObjectBase64url(),
+				registrationRequest.getTransports(),
+				registrationRequest.getClientExtensionsJSON(),
+				webAuthnServerProperty,
+				expectedRegistrationExtensionIds);
+
+		webAuthnAuthenticationManager.verifyRegistrationData(webAuthnRegistrationData);
 	}
 
 	public List<String> getExpectedRegistrationExtensionIds() {

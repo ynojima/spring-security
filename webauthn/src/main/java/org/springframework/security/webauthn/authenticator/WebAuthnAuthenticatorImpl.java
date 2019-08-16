@@ -59,6 +59,7 @@ public class  WebAuthnAuthenticatorImpl implements WebAuthnAuthenticator {
 		return counter;
 	}
 
+	@Override
 	public void setCounter(long counter) {
 		this.counter = counter;
 	}
@@ -73,7 +74,6 @@ public class  WebAuthnAuthenticatorImpl implements WebAuthnAuthenticator {
 		return clientExtensions;
 	}
 
-	@Override
 	public void setClientExtensions(String clientExtensions) {
 		this.clientExtensions = clientExtensions;
 	}

@@ -34,7 +34,6 @@ import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticatorService;
 import org.springframework.security.webauthn.exception.BadChallengeException;
 import org.springframework.security.webauthn.exception.CredentialIdNotFoundException;
-import org.springframework.security.webauthn.request.WebAuthnAuthenticationRequest;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsImpl;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
@@ -101,7 +100,7 @@ public class WebAuthnAuthenticationProviderTest {
 		when(authenticator.getAttestedCredentialData().getCredentialId()).thenReturn(credentialId);
 
 		//When
-		WebAuthnAuthenticationRequest credential = mock(WebAuthnAuthenticationRequest.class);
+		WebAuthnAuthenticationData credential = mock(WebAuthnAuthenticationData.class);
 		when(credential.getCredentialId()).thenReturn(credentialId);
 		when(userDetailsService.loadUserByCredentialId(credentialId)).thenReturn(user);
 		Authentication token = new WebAuthnAssertionAuthenticationToken(credential);
@@ -136,7 +135,7 @@ public class WebAuthnAuthenticationProviderTest {
 		when(authenticator.getAttestedCredentialData().getCredentialId()).thenReturn(credentialId);
 
 		//When
-		WebAuthnAuthenticationRequest credential = mock(WebAuthnAuthenticationRequest.class);
+		WebAuthnAuthenticationData credential = mock(WebAuthnAuthenticationData.class);
 		when(credential.getCredentialId()).thenReturn(credentialId);
 		when(userDetailsService.loadUserByCredentialId(credentialId)).thenReturn(user);
 		Authentication token = new WebAuthnAssertionAuthenticationToken(credential);
@@ -168,7 +167,7 @@ public class WebAuthnAuthenticationProviderTest {
 		doThrow(com.webauthn4j.validator.exception.BadChallengeException.class).when(authenticationContextValidator).validate(any(), any());
 
 		//When
-		WebAuthnAuthenticationRequest credential = mock(WebAuthnAuthenticationRequest.class);
+		WebAuthnAuthenticationData credential = mock(WebAuthnAuthenticationData.class);
 		when(credential.getCredentialId()).thenReturn(credentialId);
 		when(userDetailsService.loadUserByCredentialId(credentialId)).thenReturn(user);
 		Authentication token = new WebAuthnAssertionAuthenticationToken(credential);
@@ -345,7 +344,7 @@ public class WebAuthnAuthenticationProviderTest {
 	public void isUserVerificationRequired_test() {
 		WebAuthnUserDetails webAuthnUserDetails = mock(WebAuthnUserDetails.class);
 		when(webAuthnUserDetails.getUsername()).thenReturn("john.doe");
-		WebAuthnAuthenticationRequest credentials = mock(WebAuthnAuthenticationRequest.class);
+		WebAuthnAuthenticationData credentials = mock(WebAuthnAuthenticationData.class);
 		when(credentials.isUserVerificationRequired()).thenReturn(true);
 		SecurityContext securityContext = mock(SecurityContext.class);
 		Authentication authentication = mock(Authentication.class);

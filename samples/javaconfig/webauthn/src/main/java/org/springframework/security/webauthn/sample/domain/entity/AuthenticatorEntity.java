@@ -100,7 +100,6 @@ public class AuthenticatorEntity implements WebAuthnAuthenticator {
 		return clientExtensions;
 	}
 
-	@Override
 	public void setClientExtensions(String clientExtensions) {
 		this.clientExtensions = clientExtensions;
 	}

@@ -21,19 +21,21 @@ import com.webauthn4j.converter.AttestedCredentialDataConverter;
 import com.webauthn4j.converter.AuthenticatorDataConverter;
 import com.webauthn4j.util.Base64UrlUtil;
 import com.webauthn4j.util.UUIDUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.MultiFactorAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.webauthn.WebAuthnOptionWebHelper;
+import org.springframework.security.webauthn.WebAuthnRegistrationRequest;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
+import org.springframework.security.webauthn.exception.DataConversionException;
 import org.springframework.security.webauthn.exception.ValidationException;
 import org.springframework.security.webauthn.sample.domain.entity.AuthenticatorEntity;
 import org.springframework.security.webauthn.sample.domain.entity.UserEntity;
-import org.springframework.security.webauthn.sample.domain.exception.WebAuthnSampleBusinessException;
-import org.springframework.security.webauthn.sample.domain.service.WebAuthnUserDetailsServiceImpl;
+import org.springframework.security.webauthn.userdetails.InMemoryWebAuthnUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Base64Utils;
@@ -57,6 +59,8 @@ import java.util.UUID;
 @Controller
 public class WebAuthnSampleController {
 
+	private final Log logger = LogFactory.getLog(getClass());
+
 	private static final String REDIRECT_LOGIN = "redirect:/login";
 	private static final String REDIRECT_SIGNUP = "redirect:/signup";
 
@@ -67,7 +71,7 @@ public class WebAuthnSampleController {
 	private static final String VIEW_DASHBOARD_DASHBOARD = "dashboard/dashboard";
 
 	@Autowired
-	private WebAuthnUserDetailsServiceImpl webAuthnUserDetailsService;
+	private InMemoryWebAuthnUserDetailsManager webAuthnUserDetailsService;
 
 	@Autowired
 	private WebAuthnRegistrationRequestValidator registrationRequestValidator;
@@ -120,15 +124,23 @@ public class WebAuthnSampleController {
 		if (result.hasErrors()) {
 			return VIEW_SIGNUP_SIGNUP;
 		}
+
+		WebAuthnRegistrationRequest webAuthnRegistrationRequest = new WebAuthnRegistrationRequest(
+				request,
+				userCreateForm.getAuthenticator().getClientDataJSON(),
+				userCreateForm.getAuthenticator().getAttestationObject(),
+				null, //TODO
+				userCreateForm.getAuthenticator().getClientExtensions()
+		);
 		try {
-			registrationRequestValidator.validate(
-					request,
-					userCreateForm.getAuthenticator().getClientDataJSON(),
-					userCreateForm.getAuthenticator().getAttestationObject(),
-					null, //TODO
-					userCreateForm.getAuthenticator().getClientExtensions()
-			);
-		} catch (ValidationException e) {
+			registrationRequestValidator.validate(webAuthnRegistrationRequest);
+		}
+		catch (ValidationException e){
+			logger.debug("WebAuthn registration request validation failed.", e);
+			return VIEW_SIGNUP_SIGNUP;
+		}
+		catch (DataConversionException e){
+			logger.debug("WebAuthn registration request data conversion failed.", e);
 			return VIEW_SIGNUP_SIGNUP;
 		}
 
@@ -164,7 +176,7 @@ public class WebAuthnSampleController {
 		UserEntity user = destination;
 		try {
 			webAuthnUserDetailsService.createUser(user);
-		} catch (WebAuthnSampleBusinessException ex) {
+		} catch (IllegalArgumentException ex) {
 			return VIEW_SIGNUP_SIGNUP;
 		}
 

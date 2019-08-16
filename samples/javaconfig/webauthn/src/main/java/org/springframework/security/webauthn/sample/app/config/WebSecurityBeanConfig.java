@@ -37,6 +37,7 @@ import org.springframework.security.webauthn.challenge.WebAuthnChallengeReposito
 import org.springframework.security.webauthn.server.EffectiveRpIdProvider;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProviderImpl;
+import org.springframework.security.webauthn.userdetails.InMemoryWebAuthnUserDetailsManager;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 
 @Configuration
@@ -50,6 +51,11 @@ public class WebSecurityBeanConfig {
 	@Bean
 	public WebAuthnChallengeRepository webAuthnChallengeRepository(){
 		return new HttpSessionWebAuthnChallengeRepository();
+	}
+
+	@Bean
+	public WebAuthnUserDetailsService webAuthnUserDetailsService(){
+		return new InMemoryWebAuthnUserDetailsManager();
 	}
 
 	@Bean

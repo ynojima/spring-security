@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.security.webauthn.request;
+package org.springframework.security.webauthn;
 
 import com.webauthn4j.util.ArrayUtil;
 import org.springframework.security.webauthn.server.WebAuthnServerProperty;
@@ -30,7 +30,7 @@ import java.util.Objects;
  *
  * @author Yoshikazu Nojima
  */
-public class WebAuthnAuthenticationRequest implements Serializable {
+public class WebAuthnAuthenticationData implements Serializable {
 
 	//~ Instance fields
 	// ================================================================================================
@@ -47,7 +47,7 @@ public class WebAuthnAuthenticationRequest implements Serializable {
 	private final List<String> expectedAuthenticationExtensionIds;
 
 	@SuppressWarnings("squid:S00107")
-	public WebAuthnAuthenticationRequest(
+	public WebAuthnAuthenticationData(
 			byte[] credentialId,
 			byte[] clientDataJSON,
 			byte[] authenticatorData,
@@ -70,7 +70,7 @@ public class WebAuthnAuthenticationRequest implements Serializable {
 	}
 
 	@SuppressWarnings("squid:S00107")
-	public WebAuthnAuthenticationRequest(
+	public WebAuthnAuthenticationData(
 			byte[] credentialId,
 			byte[] clientDataJSON,
 			byte[] authenticatorData,
@@ -135,7 +135,7 @@ public class WebAuthnAuthenticationRequest implements Serializable {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		WebAuthnAuthenticationRequest that = (WebAuthnAuthenticationRequest) o;
+		WebAuthnAuthenticationData that = (WebAuthnAuthenticationData) o;
 		return userVerificationRequired == that.userVerificationRequired &&
 				userPresenceRequired == that.userPresenceRequired &&
 				Arrays.equals(credentialId, that.credentialId) &&

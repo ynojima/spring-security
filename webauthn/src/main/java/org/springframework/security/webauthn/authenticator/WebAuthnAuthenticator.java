@@ -36,10 +36,10 @@ public interface WebAuthnAuthenticator {
 
 	long getCounter();
 
+	void setCounter(long counter);
+
 	Set<AuthenticatorTransport> getTransports();
 
 	String getClientExtensions();
-
-	void setClientExtensions(String clientExtensions);
 
 }

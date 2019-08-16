@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WebAuthnRegistrationRequestVerificationResponseTest {
+public class WebAuthnRegistrationDataVerificationResponseTest {
 
 	@Test
 	public void equals_hashCode_test() {
