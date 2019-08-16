@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.springframework.security.webauthn.request;
+package org.springframework.security.webauthn;
 
 import com.webauthn4j.converter.AuthenticatorDataConverter;
 import com.webauthn4j.converter.util.CborConverter;
 import com.webauthn4j.data.client.ClientDataType;
-import com.webauthn4j.data.client.Origin;
-import com.webauthn4j.data.client.challenge.Challenge;
-import com.webauthn4j.data.client.challenge.DefaultChallenge;
-import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.test.TestDataUtil;
 import org.junit.Test;
-import org.springframework.security.webauthn.WebAuthnAuthenticationData;
+import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeImpl;
+import org.springframework.security.webauthn.server.WebAuthnOrigin;
+import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 
 import java.util.Collections;
 
@@ -37,16 +36,16 @@ public class WebAuthnAuthenticationDataTest {
 
 	@Test
 	public void getter_test() {
-		Challenge challenge = new DefaultChallenge();
+		WebAuthnChallenge challenge = new WebAuthnChallengeImpl();
 		byte[] clientDataJSON = TestDataUtil.createClientDataJSON(ClientDataType.GET);
 		byte[] authenticatorData = new AuthenticatorDataConverter(cborConverter).convert(TestDataUtil.createAuthenticatorData());
-		ServerProperty serverProperty = new ServerProperty(
-				new Origin("https://example.com"),
+		WebAuthnServerProperty serverProperty = new WebAuthnServerProperty(
+				new WebAuthnOrigin("https://example.com"),
 				"example.com",
 				challenge,
 				new byte[]{0x43, 0x21}
 		);
-		WebAuthnAuthenticationData request = new WebAuthnAuthenticationData(
+		WebAuthnAuthenticationData authenticationData = new WebAuthnAuthenticationData(
 				new byte[]{0x01, 0x23},
 				clientDataJSON,
 				authenticatorData,
@@ -57,20 +56,20 @@ public class WebAuthnAuthenticationDataTest {
 				true,
 				Collections.singletonList("uvi")
 		);
-		assertThat(request.getCredentialId()).isEqualTo(new byte[]{0x01, 0x23});
-		assertThat(request.getClientDataJSON()).isEqualTo(clientDataJSON);
-		assertThat(request.getAuthenticatorData()).isEqualTo(authenticatorData);
-		assertThat(request.getSignature()).isEqualTo(new byte[]{0x45, 0x56});
-		assertThat(request.getClientExtensionsJSON()).isEqualTo("");
-		assertThat(request.getServerProperty()).isEqualTo(serverProperty);
-		assertThat(request.isUserVerificationRequired()).isEqualTo(true);
-		assertThat(request.isUserPresenceRequired()).isEqualTo(true);
-		assertThat(request.getExpectedAuthenticationExtensionIds()).isEqualTo(Collections.singletonList("uvi"));
+		assertThat(authenticationData.getCredentialId()).isEqualTo(new byte[]{0x01, 0x23});
+		assertThat(authenticationData.getClientDataJSON()).isEqualTo(clientDataJSON);
+		assertThat(authenticationData.getAuthenticatorData()).isEqualTo(authenticatorData);
+		assertThat(authenticationData.getSignature()).isEqualTo(new byte[]{0x45, 0x56});
+		assertThat(authenticationData.getClientExtensionsJSON()).isEqualTo("");
+		assertThat(authenticationData.getServerProperty()).isEqualTo(serverProperty);
+		assertThat(authenticationData.isUserVerificationRequired()).isEqualTo(true);
+		assertThat(authenticationData.isUserPresenceRequired()).isEqualTo(true);
+		assertThat(authenticationData.getExpectedAuthenticationExtensionIds()).isEqualTo(Collections.singletonList("uvi"));
 	}
 
 	@Test
 	public void equals_hashCode_test() {
-		Challenge challenge = new DefaultChallenge();
+		WebAuthnChallenge challenge = new WebAuthnChallengeImpl();
 		byte[] clientDataJSON = TestDataUtil.createClientDataJSON(ClientDataType.GET);
 		byte[] authenticatorData = new AuthenticatorDataConverter(cborConverter).convert(TestDataUtil.createAuthenticatorData());
 		WebAuthnAuthenticationData requestA = new WebAuthnAuthenticationData(
@@ -79,8 +78,8 @@ public class WebAuthnAuthenticationDataTest {
 				authenticatorData,
 				new byte[]{0x45, 0x56},
 				"",
-				new ServerProperty(
-						new Origin("https://example.com"),
+				new WebAuthnServerProperty(
+						new WebAuthnOrigin("https://example.com"),
 						"example.com",
 						challenge,
 						new byte[]{0x43, 0x21}
@@ -94,8 +93,8 @@ public class WebAuthnAuthenticationDataTest {
 				authenticatorData,
 				new byte[]{0x45, 0x56},
 				"",
-				new ServerProperty(
-						new Origin("https://example.com"),
+				new WebAuthnServerProperty(
+						new WebAuthnOrigin("https://example.com"),
 						"example.com",
 						challenge,
 						new byte[]{0x43, 0x21}

@@ -7,20 +7,20 @@ import java.util.Set;
 public class WebAuthnRegistrationRequest {
 
 	private HttpServletRequest httpServletRequest;
-	private String clientDataBase64url;
-	private String attestationObjectBase64url;
+	private String clientDataBase64Url;
+	private String attestationObjectBase64Url;
 	private Set<String> transports;
 	private String clientExtensionsJSON;
 
 	public WebAuthnRegistrationRequest(
 			HttpServletRequest httpServletRequest,
-			String clientDataBase64url,
-			String attestationObjectBase64url,
+			String clientDataBase64Url,
+			String attestationObjectBase64Url,
 			Set<String> transports,
 			String clientExtensionsJSON) {
 		this.httpServletRequest = httpServletRequest;
-		this.clientDataBase64url = clientDataBase64url;
-		this.attestationObjectBase64url = attestationObjectBase64url;
+		this.clientDataBase64Url = clientDataBase64Url;
+		this.attestationObjectBase64Url = attestationObjectBase64Url;
 		this.transports = transports;
 		this.clientExtensionsJSON = clientExtensionsJSON;
 	}
@@ -29,12 +29,12 @@ public class WebAuthnRegistrationRequest {
 		return httpServletRequest;
 	}
 
-	public String getClientDataBase64url() {
-		return clientDataBase64url;
+	public String getClientDataBase64Url() {
+		return clientDataBase64Url;
 	}
 
-	public String getAttestationObjectBase64url() {
-		return attestationObjectBase64url;
+	public String getAttestationObjectBase64Url() {
+		return attestationObjectBase64Url;
 	}
 
 	public Set<String> getTransports() {
@@ -51,14 +51,14 @@ public class WebAuthnRegistrationRequest {
 		if (o == null || getClass() != o.getClass()) return false;
 		WebAuthnRegistrationRequest that = (WebAuthnRegistrationRequest) o;
 		return Objects.equals(httpServletRequest, that.httpServletRequest) &&
-				Objects.equals(clientDataBase64url, that.clientDataBase64url) &&
-				Objects.equals(attestationObjectBase64url, that.attestationObjectBase64url) &&
+				Objects.equals(clientDataBase64Url, that.clientDataBase64Url) &&
+				Objects.equals(attestationObjectBase64Url, that.attestationObjectBase64Url) &&
 				Objects.equals(transports, that.transports) &&
 				Objects.equals(clientExtensionsJSON, that.clientExtensionsJSON);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(httpServletRequest, clientDataBase64url, attestationObjectBase64url, transports, clientExtensionsJSON);
+		return Objects.hash(httpServletRequest, clientDataBase64Url, attestationObjectBase64Url, transports, clientExtensionsJSON);
 	}
 }

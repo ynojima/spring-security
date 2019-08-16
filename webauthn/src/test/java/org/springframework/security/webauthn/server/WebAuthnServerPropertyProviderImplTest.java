@@ -17,13 +17,11 @@
 package org.springframework.security.webauthn.server;
 
 import com.webauthn4j.data.client.Origin;
-import com.webauthn4j.data.client.challenge.Challenge;
-import com.webauthn4j.data.client.challenge.DefaultChallenge;
-import com.webauthn4j.server.ServerProperty;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeImpl;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
-import org.springframework.security.webauthn.options.OptionsProvider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -32,8 +30,8 @@ import static org.mockito.Mockito.when;
 public class WebAuthnServerPropertyProviderImplTest {
 
 	private WebAuthnChallengeRepository webAuthnChallengeRepository = mock(WebAuthnChallengeRepository.class);
-	private OptionsProvider optionsProvider = mock(OptionsProvider.class);
-	private WebAuthnServerPropertyProviderImpl target = new WebAuthnServerPropertyProviderImpl(optionsProvider, webAuthnChallengeRepository);
+	private EffectiveRpIdProvider effectiveRpIdProvider = mock(EffectiveRpIdProvider.class);
+	private WebAuthnServerPropertyProviderImpl target = new WebAuthnServerPropertyProviderImpl(effectiveRpIdProvider, webAuthnChallengeRepository);
 
 	@Test
 	public void provide_test() {
@@ -41,14 +39,14 @@ public class WebAuthnServerPropertyProviderImplTest {
 		request.setScheme("https");
 		request.setServerName("origin.example.com");
 		request.setServerPort(443);
-		Challenge mockChallenge = new DefaultChallenge();
+		WebAuthnChallenge mockChallenge = new WebAuthnChallengeImpl();
 		when(webAuthnChallengeRepository.loadOrGenerateChallenge(request)).thenReturn(mockChallenge);
-		when(optionsProvider.getEffectiveRpId(request)).thenReturn("rpid.example.com");
+		when(effectiveRpIdProvider.getEffectiveRpId(request)).thenReturn("rpid.example.com");
 
-		ServerProperty serverProperty = target.provide(request);
+		WebAuthnServerProperty serverProperty = target.provide(request);
 
 		assertThat(serverProperty.getRpId()).isEqualTo("rpid.example.com");
-		assertThat(serverProperty.getOrigin()).isEqualTo(new Origin("https://origin.example.com"));
+		assertThat(serverProperty.getOrigin()).isEqualTo(new WebAuthnOrigin("https://origin.example.com"));
 		assertThat(serverProperty.getChallenge()).isEqualTo(mockChallenge);
 	}
 }

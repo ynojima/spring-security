@@ -10,7 +10,6 @@ import com.webauthn4j.data.attestation.AttestationObject;
 import com.webauthn4j.data.client.Origin;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
-import com.webauthn4j.util.Base64UrlUtil;
 import com.webauthn4j.util.exception.WebAuthnException;
 import com.webauthn4j.validator.WebAuthnAuthenticationContextValidator;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
@@ -49,8 +48,8 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 			WebAuthnRegistrationData registrationData
 	) {
 
-		Assert.hasText(registrationData.getClientDataBase64url(), "clientDataBase64url must have text");
-		Assert.hasText(registrationData.getAttestationObjectBase64url(), "attestationObjectBase64url must have text");
+		Assert.notNull(registrationData.getClientDataJSON(), "clientDataJSON must not be null");
+		Assert.notNull(registrationData.getAttestationObject(), "attestationObject must not be null");
 		if (registrationData.getTransports() != null) {
 			registrationData.getTransports().forEach(transport -> Assert.hasText(transport, "each transport must have text"));
 		}
@@ -121,8 +120,8 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 
 	private WebAuthnRegistrationContext createRegistrationContext(WebAuthnRegistrationData webAuthnRegistrationData) {
 
-		byte[] clientDataBytes = Base64UrlUtil.decode(webAuthnRegistrationData.getClientDataBase64url());
-		byte[] attestationObjectBytes = Base64UrlUtil.decode(webAuthnRegistrationData.getAttestationObjectBase64url());
+		byte[] clientDataBytes = webAuthnRegistrationData.getClientDataJSON();
+		byte[] attestationObjectBytes = webAuthnRegistrationData.getAttestationObject();
 		Set<String> transports = webAuthnRegistrationData.getTransports();
 		String clientExtensionsJSON = webAuthnRegistrationData.getClientExtensionsJSON();
 		ServerProperty serverProperty = convertToServerProperty(webAuthnRegistrationData.getServerProperty());

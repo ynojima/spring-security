@@ -1,5 +1,6 @@
 package org.springframework.security.webauthn;
 
+import com.webauthn4j.util.Base64UrlUtil;
 import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.util.Assert;
@@ -29,8 +30,8 @@ public class WebAuthnRegistrationRequestValidator {
 		WebAuthnServerProperty webAuthnServerProperty = webAuthnServerPropertyProvider.provide(registrationRequest.getHttpServletRequest());
 
 		WebAuthnRegistrationData webAuthnRegistrationData =	new WebAuthnRegistrationData(
-				registrationRequest.getClientDataBase64url(),
-				registrationRequest.getAttestationObjectBase64url(),
+				Base64UrlUtil.decode(registrationRequest.getClientDataBase64Url()),
+				Base64UrlUtil.decode(registrationRequest.getAttestationObjectBase64Url()),
 				registrationRequest.getTransports(),
 				registrationRequest.getClientExtensionsJSON(),
 				webAuthnServerProperty,

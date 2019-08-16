@@ -1,6 +1,7 @@
 package org.springframework.security.webauthn.authenticator;
 
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
@@ -78,24 +79,21 @@ public class  WebAuthnAuthenticatorImpl implements WebAuthnAuthenticator {
 		this.clientExtensions = clientExtensions;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		if (!super.equals(o)) return false;
 		WebAuthnAuthenticatorImpl that = (WebAuthnAuthenticatorImpl) o;
-		return Objects.equals(name, that.name);
+		return counter == that.counter &&
+				Objects.equals(name, that.name) &&
+				Arrays.equals(attestationObject, that.attestationObject) &&
+				Objects.equals(clientExtensions, that.clientExtensions);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int hashCode() {
-
-		return Objects.hash(super.hashCode(), name);
+		int result = Objects.hash(name, counter, clientExtensions);
+		result = 31 * result + Arrays.hashCode(attestationObject);
+		return result;
 	}
 }

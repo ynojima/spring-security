@@ -17,7 +17,6 @@
 package org.springframework.security.webauthn;
 
 import com.webauthn4j.data.extension.client.FIDOAppIDExtensionClientInput;
-import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.util.Base64UrlUtil;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,6 +31,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 
 import java.util.Collections;
@@ -93,7 +93,7 @@ public class WebAuthnProcessingFilterTest {
 		String signature = "MEUCIGBYMUVg2KkMG7V7UEsGxUeKVaO8x587JyVoZkk6FmsgAiEA5XRKxlYe2Vpwn-JYEJhcEVJ3-0nYFG-JfheOk4rA3dc";
 		String clientExtensionsJSON = "";
 
-		ServerProperty serverProperty = mock(ServerProperty.class);
+		WebAuthnServerProperty serverProperty = mock(WebAuthnServerProperty.class);
 
 
 		//Given
@@ -134,7 +134,7 @@ public class WebAuthnProcessingFilterTest {
 		String signature = "MEUCIGBYMUVg2KkMG7V7UEsGxUeKVaO8x587JyVoZkk6FmsgAiEA5XRKxlYe2Vpwn-JYEJhcEVJ3-0nYFG-JfheOk4rA3dc";
 		String clientExtensionsJSON = "";
 
-		ServerProperty serverProperty = mock(ServerProperty.class);
+		WebAuthnServerProperty serverProperty = mock(WebAuthnServerProperty.class);
 
 		//Given
 		target.setPostOnly(false);
@@ -184,7 +184,7 @@ public class WebAuthnProcessingFilterTest {
 		String signature = "MEUCIGBYMUVg2KkMG7V7UEsGxUeKVaO8x587JyVoZkk6FmsgAiEA5XRKxlYe2Vpwn-JYEJhcEVJ3-0nYFG-JfheOk4rA3dc";
 		String clientExtensionsJSON = "";
 
-		ServerProperty serverProperty = mock(ServerProperty.class);
+		WebAuthnServerProperty serverProperty = mock(WebAuthnServerProperty.class);
 
 		//Given
 		target.setUsernameParameter(usernameParameter);

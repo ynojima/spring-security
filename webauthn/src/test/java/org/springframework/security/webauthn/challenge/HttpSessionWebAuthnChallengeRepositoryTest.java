@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Test for HttpSessionWebAuthnChallengeRepository
+ * Test for {@link HttpSessionWebAuthnChallengeRepository}
  */
 public class HttpSessionWebAuthnChallengeRepositoryTest {
 
@@ -34,7 +34,7 @@ public class HttpSessionWebAuthnChallengeRepositoryTest {
 
 	@Test
 	public void generateChallenge_test() {
-		Challenge challenge = target.generateChallenge();
+		WebAuthnChallenge challenge = target.generateChallenge();
 		assertThat(challenge).isNotNull();
 		assertThat(challenge.getValue()).hasSize(16);
 	}
@@ -45,11 +45,11 @@ public class HttpSessionWebAuthnChallengeRepositoryTest {
 		String attrName = ".test-challenge";
 
 		target.setSessionAttributeName(attrName);
-		Challenge challenge = target.generateChallenge();
+		WebAuthnChallenge challenge = target.generateChallenge();
 		target.saveChallenge(challenge, request);
 
 		HttpSession session = request.getSession();
-		assertThat((Challenge) session.getAttribute(attrName)).isEqualTo(challenge);
+		assertThat((WebAuthnChallenge) session.getAttribute(attrName)).isEqualTo(challenge);
 	}
 
 	@Test
@@ -61,10 +61,10 @@ public class HttpSessionWebAuthnChallengeRepositoryTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setSession(session);
 
-		Challenge challenge = target.generateChallenge();
+		WebAuthnChallenge challenge = target.generateChallenge();
 		target.saveChallenge(challenge, prevRequest);
 		target.saveChallenge(null, request);
-		Challenge loadedChallenge = target.loadChallenge(request);
+		WebAuthnChallenge loadedChallenge = target.loadChallenge(request);
 
 		assertThat(loadedChallenge).isNull();
 	}
@@ -74,7 +74,7 @@ public class HttpSessionWebAuthnChallengeRepositoryTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		target.saveChallenge(null, request);
-		Challenge loadedChallenge = target.loadChallenge(request);
+		WebAuthnChallenge loadedChallenge = target.loadChallenge(request);
 
 		assertThat(loadedChallenge).isNull();
 	}
@@ -91,9 +91,9 @@ public class HttpSessionWebAuthnChallengeRepositoryTest {
 		String attrName = ".test-challenge";
 
 		target.setSessionAttributeName(attrName);
-		Challenge challenge = target.generateChallenge();
+		WebAuthnChallenge challenge = target.generateChallenge();
 		target.saveChallenge(challenge, prevRequest);
-		Challenge loadedChallenge = target.loadChallenge(request);
+		WebAuthnChallenge loadedChallenge = target.loadChallenge(request);
 
 		assertThat(loadedChallenge).isEqualTo(challenge);
 	}
@@ -102,7 +102,7 @@ public class HttpSessionWebAuthnChallengeRepositoryTest {
 	public void loadChallenge_test_without_previous_request() {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
-		Challenge loadedChallenge = target.loadChallenge(request);
+		WebAuthnChallenge loadedChallenge = target.loadChallenge(request);
 
 		assertThat(loadedChallenge).isNull();
 	}
@@ -111,7 +111,7 @@ public class HttpSessionWebAuthnChallengeRepositoryTest {
 	public void loadOrGenerateChallenge_test_without_previous_request() {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
-		Challenge loadedChallenge = target.loadOrGenerateChallenge(request);
+		WebAuthnChallenge loadedChallenge = target.loadOrGenerateChallenge(request);
 
 		assertThat(loadedChallenge).isNotNull();
 	}

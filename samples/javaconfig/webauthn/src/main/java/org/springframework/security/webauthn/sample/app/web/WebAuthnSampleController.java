@@ -159,7 +159,7 @@ public class WebAuthnSampleController {
 		byte[] authenticatorData = attestationObjectConverter.extractAuthenticatorData(attestationObject);
 		byte[] attestedCredentialData = authenticatorDataConverter.extractAttestedCredentialData(authenticatorData);
 		byte[] credentialId = attestedCredentialDataConverter.extractCredentialId(attestedCredentialData);
-		long signCount = 0; //TODO: authenticatorDataConverter.extractSignCount(authenticatorData);
+		long signCount = authenticatorDataConverter.extractSignCount(authenticatorData);
 
 		authenticator.setUser(destination);
 		authenticator.setCredentialId(credentialId);

@@ -18,11 +18,6 @@ package org.springframework.security.webauthn.config.configurers;
 
 
 import com.webauthn4j.converter.util.JsonConverter;
-import com.webauthn4j.data.PublicKeyCredentialType;
-import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier;
-import com.webauthn4j.data.client.challenge.DefaultChallenge;
-import com.webauthn4j.data.extension.client.FIDOAppIDExtensionClientInput;
-import com.webauthn4j.data.extension.client.SupportedExtensionsExtensionClientInput;
 import com.webauthn4j.test.TestDataUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +31,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.security.webauthn.WebAuthnProcessingFilter;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeImpl;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetails;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
@@ -101,32 +97,6 @@ public class WebAuthnLoginConfigurerSpringTest {
 	}
 
 	@Test
-	public void attestationOptionsEndpointPath_with_anonymous_user_test() throws Exception {
-		mvc = MockMvcBuilders.standaloneSetup()
-				.addFilter(springSecurityFilterChain)
-				.build();
-
-		mvc
-				.perform(get("/webauthn/attestation/options").with(anonymous()))
-				.andExpect(unauthenticated())
-				.andExpect(content().json("{\"rp\":{\"name\":\"example\",\"icon\":\"dummy\",\"id\":\"example.com\"},\"challenge\":\"aFglXMZdQTKD4krvNzJBzA\",\"pubKeyCredParams\":[{\"type\":\"public-key\",\"alg\":-7},{\"type\":\"public-key\",\"alg\":-65535}],\"timeout\":10000,\"excludeCredentials\":[],\"authenticatorSelection\":{\"requireResidentKey\":false,\"userVerification\":\"preferred\"},\"extensions\":{\"exts\":true}}"))
-				.andExpect(status().isOk());
-	}
-
-	@Test
-	public void assertionOptionsEndpointPath_with_anonymous_user_test() throws Exception {
-		mvc = MockMvcBuilders.standaloneSetup()
-				.addFilter(springSecurityFilterChain)
-				.build();
-
-		mvc
-				.perform(get("/webauthn/assertion/options").with(anonymous()))
-				.andExpect(unauthenticated())
-				.andExpect(content().json("{\"challenge\":\"aFglXMZdQTKD4krvNzJBzA\",\"timeout\":20000,\"rpId\":\"example.com\",\"allowCredentials\":[],\"extensions\":{\"appid\":\"\"}}"))
-				.andExpect(status().isOk());
-	}
-
-	@Test
 	public void rootPath_with_authenticated_user_test() throws Exception {
 		mvc = MockMvcBuilders.standaloneSetup()
 				.defaultRequest(get("/").with(user("john")))
@@ -140,19 +110,6 @@ public class WebAuthnLoginConfigurerSpringTest {
 
 	}
 
-	@Test
-	public void assertionOptionsEndpointPath_with_authenticated_user_test() throws Exception {
-		mvc = MockMvcBuilders.standaloneSetup()
-				.addFilter(springSecurityFilterChain)
-				.build();
-
-		mvc
-				.perform(get("/webauthn/assertion/options").with(user("john")))
-				.andExpect(authenticated())
-				.andExpect(content().json("{\"challenge\":\"aFglXMZdQTKD4krvNzJBzA\",\"timeout\":20000,\"rpId\":\"example.com\",\"allowCredentials\":[{\"type\":\"public-key\",\"id\":\"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}],\"extensions\":{\"appid\":\"\"}}"))
-				.andExpect(status().isOk());
-	}
-
 	@EnableWebSecurity
 	static class Config extends WebSecurityConfigurerAdapter {
 
@@ -164,21 +121,6 @@ public class WebAuthnLoginConfigurerSpringTest {
 
 			// Authentication
 			http.apply(webAuthnLogin())
-					.rpId("example.com")
-					.rpIcon("dummy")
-					.rpName("example")
-					.publicKeyCredParams()
-						.addPublicKeyCredParams(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.ES256)
-						.addPublicKeyCredParams(PublicKeyCredentialType.PUBLIC_KEY, COSEAlgorithmIdentifier.RS1)
-					.and()
-					.registrationTimeout(10000L)
-					.authenticationTimeout(20000L)
-					.registrationExtensions()
-						.put(new SupportedExtensionsExtensionClientInput(true))
-					.and()
-					.authenticationExtensions()
-						.put(new FIDOAppIDExtensionClientInput(""))
-					.and()
 					.usernameParameter("username")
 					.passwordParameter("password")
 					.credentialIdParameter("credentialId")
@@ -188,14 +130,7 @@ public class WebAuthnLoginConfigurerSpringTest {
 					.clientExtensionsJSONParameter("clientExtensionsJSON")
 					.successForwardUrl("/")
 					.failureForwardUrl("/login")
-					.loginPage("/login")
-					.attestationOptionsEndpoint()
-						.processingUrl("/webauthn/attestation/options")
-					.and()
-					.assertionOptionsEndpoint()
-						.processingUrl("/webauthn/assertion/options")
-					.and()
-					.jsonConverter(jsonConverter);
+					.loginPage("/login");
 
 			// Authorization
 			http.authorizeRequests()
@@ -219,7 +154,7 @@ public class WebAuthnLoginConfigurerSpringTest {
 			@Bean
 			public WebAuthnChallengeRepository challengeRepository() {
 				WebAuthnChallengeRepository webAuthnChallengeRepository = mock(WebAuthnChallengeRepository.class);
-				when(webAuthnChallengeRepository.loadOrGenerateChallenge(any())).thenReturn(new DefaultChallenge("aFglXMZdQTKD4krvNzJBzA"));
+				when(webAuthnChallengeRepository.loadOrGenerateChallenge(any())).thenReturn(new WebAuthnChallengeImpl("aFglXMZdQTKD4krvNzJBzA"));
 				return webAuthnChallengeRepository;
 			}
 

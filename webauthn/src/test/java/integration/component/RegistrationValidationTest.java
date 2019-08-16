@@ -16,27 +16,33 @@
 
 package integration.component;
 
+import com.webauthn4j.converter.util.CborConverter;
 import com.webauthn4j.data.*;
 import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier;
 import com.webauthn4j.data.client.Origin;
 import com.webauthn4j.data.client.challenge.Challenge;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
-import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.test.authenticator.webauthn.PackedAuthenticator;
 import com.webauthn4j.test.authenticator.webauthn.WebAuthnAuthenticatorAdaptor;
 import com.webauthn4j.test.client.ClientPlatform;
 import com.webauthn4j.util.Base64UrlUtil;
+import com.webauthn4j.validator.WebAuthnAuthenticationContextValidator;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.security.webauthn.WebAuthnRegistrationRequestVerificationResponse;
+import org.springframework.security.webauthn.WebAuthn4JWebAuthnAuthenticationManager;
+import org.springframework.security.webauthn.WebAuthnAuthenticationManager;
+import org.springframework.security.webauthn.WebAuthnRegistrationRequest;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
+import org.springframework.security.webauthn.challenge.WebAuthnChallenge;
+import org.springframework.security.webauthn.challenge.WebAuthnChallengeImpl;
+import org.springframework.security.webauthn.server.WebAuthnOrigin;
+import org.springframework.security.webauthn.server.WebAuthnServerProperty;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 
 import java.util.Collections;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -47,18 +53,22 @@ import static org.mockito.Mockito.when;
 public class RegistrationValidationTest {
 
 	String rpId = "example.com";
-	Challenge challenge = new DefaultChallenge();
 	private Origin origin = new Origin("http://localhost");
+	private WebAuthnOrigin webAuthnOrigin = new WebAuthnOrigin(origin.toString());
+	Challenge challenge = new DefaultChallenge();
+	WebAuthnChallenge webAuthnChallenge = new WebAuthnChallengeImpl(challenge.getValue());
 	private WebAuthnAuthenticatorAdaptor webAuthnModelAuthenticatorAdaptor = new WebAuthnAuthenticatorAdaptor(new PackedAuthenticator());
 	private ClientPlatform clientPlatform = new ClientPlatform(origin, webAuthnModelAuthenticatorAdaptor);
 	private WebAuthnServerPropertyProvider webAuthnServerPropertyProvider = mock(WebAuthnServerPropertyProvider.class);
-	private WebAuthnRegistrationRequestValidator target = new WebAuthnRegistrationRequestValidator(
-			WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator(), webAuthnServerPropertyProvider
-	);
+	private WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator = WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator();
+	private WebAuthnAuthenticationContextValidator webAuthnAuthenticationContextValidator = new WebAuthnAuthenticationContextValidator();
+	private CborConverter cborConverter = new CborConverter();
+	private WebAuthnAuthenticationManager webAuthnAuthenticationManager = new WebAuthn4JWebAuthnAuthenticationManager(webAuthnRegistrationContextValidator, webAuthnAuthenticationContextValidator, cborConverter);
+	private WebAuthnRegistrationRequestValidator target = new WebAuthnRegistrationRequestValidator(webAuthnAuthenticationManager, webAuthnServerPropertyProvider);
 
 	@Test
 	public void validate_test() {
-		ServerProperty serverProperty = new ServerProperty(origin, rpId, challenge, null);
+		WebAuthnServerProperty serverProperty = new WebAuthnServerProperty(webAuthnOrigin, rpId, webAuthnChallenge, null);
 		when(webAuthnServerPropertyProvider.provide(any())).thenReturn(serverProperty);
 
 
@@ -93,12 +103,7 @@ public class RegistrationValidationTest {
 		Set<String> transports = Collections.emptySet();
 		String clientExtensionsJSON = null;
 
-		WebAuthnRegistrationRequestVerificationResponse response
-				= target.validate(mockHttpServletRequest, clientDataBase64, attestationObjectBase64, transports, clientExtensionsJSON);
-
-		assertThat(response.getAttestationObject()).isNotNull();
-		assertThat(response.getCollectedClientData()).isNotNull();
-		assertThat(response.getRegistrationExtensionsClientOutputs()).isNull();
+		target.validate(new WebAuthnRegistrationRequest(mockHttpServletRequest, clientDataBase64, attestationObjectBase64, transports, clientExtensionsJSON));
 	}
 
 }

@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package org.springframework.security.webauthn.endpoint;
-
+package org.springframework.security.webauthn.authenticator;
 
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WebAuthnPublicKeyCredentialUserEntityTest {
+/**
+ * Test for {@link WebAuthnAuthenticatorImpl}
+ */
+public class WebAuthnAuthenticatorImplTest {
 
 	@Test
 	public void equals_hashCode_test() {
-		WebAuthnPublicKeyCredentialUserEntity instanceA = new WebAuthnPublicKeyCredentialUserEntity("", "john", "dummy", "dummy");
-		WebAuthnPublicKeyCredentialUserEntity instanceB = new WebAuthnPublicKeyCredentialUserEntity("", "john", "dummy", "dummy");
-
+		WebAuthnAuthenticatorImpl instanceA = new WebAuthnAuthenticatorImpl("authenticator", null, 0);
+		WebAuthnAuthenticatorImpl instanceB = new WebAuthnAuthenticatorImpl("authenticator", null, 0);
 		assertThat(instanceA).isEqualTo(instanceB);
 		assertThat(instanceA).hasSameHashCodeAs(instanceB);
 	}
 
+	@Test
+	public void get_set_name_test() {
+		WebAuthnAuthenticatorImpl instance = new WebAuthnAuthenticatorImpl("authenticator", null, 0);
+		assertThat(instance.getName()).isEqualTo("authenticator");
+		instance.setName("newName");
+		assertThat(instance.getName()).isEqualTo("newName");
+	}
 }

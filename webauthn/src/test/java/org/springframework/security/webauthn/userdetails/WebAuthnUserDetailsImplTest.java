@@ -17,11 +17,11 @@
 package org.springframework.security.webauthn.userdetails;
 
 
-import com.webauthn4j.authenticator.Authenticator;
-import com.webauthn4j.authenticator.AuthenticatorImpl;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
+import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticatorImpl;
 
 import java.util.Collections;
 
@@ -32,7 +32,7 @@ public class WebAuthnUserDetailsImplTest {
 	@Test
 	public void getter_setter_test() {
 		GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_ADMIN");
-		Authenticator authenticator = new AuthenticatorImpl(null, null, 0);
+		WebAuthnAuthenticator authenticator = new WebAuthnAuthenticatorImpl(null, null, 0);
 		WebAuthnUserDetailsImpl userDetails = new WebAuthnUserDetailsImpl(
 				new byte[32],
 				"dummy",
