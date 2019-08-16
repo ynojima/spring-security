@@ -24,10 +24,11 @@ import com.webauthn4j.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.MultiFactorAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.webauthn.WebAuthnOptionWebHelper;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
-import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.exception.ValidationException;
 import org.springframework.security.webauthn.sample.domain.entity.AuthenticatorEntity;
 import org.springframework.security.webauthn.sample.domain.entity.UserEntity;
@@ -72,7 +73,7 @@ public class WebAuthnSampleController {
 	private WebAuthnRegistrationRequestValidator registrationRequestValidator;
 
 	@Autowired
-	private WebAuthnChallengeRepository challengeRepository;
+	private WebAuthnOptionWebHelper webAuthnOptionWebHelper;
 
 	@Autowired
 	private AttestationObjectConverter attestationObjectConverter;
@@ -86,6 +87,13 @@ public class WebAuthnSampleController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@ModelAttribute
+	public void addAttributes(Model model, HttpServletRequest request) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		model.addAttribute("webAuthnChallenge", webAuthnOptionWebHelper.getChallenge(request));
+		model.addAttribute("webAuthnCredentialIds", webAuthnOptionWebHelper.getCredentialIds(username));
+	}
+
 	@RequestMapping(value = "/")
 	public String index(Model model) {
 		return REDIRECT_SIGNUP;
@@ -97,14 +105,12 @@ public class WebAuthnSampleController {
 	}
 
 	@RequestMapping(value = "/signup", method = RequestMethod.GET)
-	public String template(Model model, HttpServletRequest request) {
+	public String template(Model model) {
 		UserCreateForm userCreateForm = new UserCreateForm();
 		UUID userHandle = UUID.randomUUID();
 		String userHandleStr = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(UUIDUtil.convertUUIDToBytes(userHandle));
 		userCreateForm.setUserHandle(userHandleStr);
 		model.addAttribute("userForm", userCreateForm);
-		String challenge = Base64UrlUtil.encodeToString(challengeRepository.loadOrGenerateChallenge(request).getValue());
-		model.addAttribute("challenge", challenge);
 		return VIEW_SIGNUP_SIGNUP;
 	}
 

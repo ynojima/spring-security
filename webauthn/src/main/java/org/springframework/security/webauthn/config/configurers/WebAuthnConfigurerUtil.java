@@ -25,7 +25,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.webauthn.WebAuthn4JWebAuthnAuthenticationManager;
 import org.springframework.security.webauthn.WebAuthnAuthenticationManager;
-import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
 import org.springframework.security.webauthn.challenge.HttpSessionWebAuthnChallengeRepository;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
@@ -40,30 +39,20 @@ public class WebAuthnConfigurerUtil {
 	private WebAuthnConfigurerUtil() {
 	}
 
-	static <H extends HttpSecurityBuilder<H>> WebAuthnChallengeRepository getOrCreateChallengeRepository(H http) {
+	public static <H extends HttpSecurityBuilder<H>> WebAuthnAuthenticationManager getOrCreateWebAuthnAuthenticationManager(H http) {
 		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		WebAuthnChallengeRepository webAuthnChallengeRepository;
-		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnChallengeRepository.class);
+		WebAuthnAuthenticationManager webAuthnAuthenticationManager;
+		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnAuthenticationManager.class);
 		if (beanNames.length == 0) {
-			webAuthnChallengeRepository = new HttpSessionWebAuthnChallengeRepository();
+			webAuthnAuthenticationManager = new WebAuthn4JWebAuthnAuthenticationManager(
+					getOrCreateWebAuthnRegistrationContextValidator(http),
+					getOrCreateWebAuthnAuthenticationContextValidator(http),
+					getOrCreateJsonConverter(http).getCborConverter()
+			);
 		} else {
-			webAuthnChallengeRepository = applicationContext.getBean(WebAuthnChallengeRepository.class);
+			webAuthnAuthenticationManager = applicationContext.getBean(WebAuthnAuthenticationManager.class);
 		}
-		return webAuthnChallengeRepository;
-	}
-
-	public static <H extends HttpSecurityBuilder<H>> JsonConverter getOrCreateJsonConverter(H http) {
-		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		JsonConverter jsonConverter;
-		String[] beanNames = applicationContext.getBeanNamesForType(JsonConverter.class);
-		if (beanNames.length == 0) {
-			ObjectMapper jsonMapper = new ObjectMapper();
-			ObjectMapper cborMapper = new ObjectMapper(new CBORFactory());
-			jsonConverter = new JsonConverter(jsonMapper, cborMapper);
-		} else {
-			jsonConverter = applicationContext.getBean(JsonConverter.class);
-		}
-		return jsonConverter;
+		return webAuthnAuthenticationManager;
 	}
 
 	public static <H extends HttpSecurityBuilder<H>> WebAuthnServerPropertyProvider getOrCreateServerPropertyProvider(H http) {
@@ -83,32 +72,30 @@ public class WebAuthnConfigurerUtil {
 		return applicationContext.getBean(WebAuthnUserDetailsService.class);
 	}
 
-	public static <H extends HttpSecurityBuilder<H>> WebAuthnRegistrationRequestValidator getOrCreateWebAuthnRegistrationRequestValidator(H http) {
+	static <H extends HttpSecurityBuilder<H>> JsonConverter getOrCreateJsonConverter(H http) {
 		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		WebAuthnRegistrationRequestValidator webAuthnRegistrationRequestValidator;
-		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnRegistrationRequestValidator.class);
+		JsonConverter jsonConverter;
+		String[] beanNames = applicationContext.getBeanNamesForType(JsonConverter.class);
 		if (beanNames.length == 0) {
-			webAuthnRegistrationRequestValidator = new WebAuthnRegistrationRequestValidator(getOrCreateWebAuthnAuthenticationManager(http), getOrCreateServerPropertyProvider(http));
+			ObjectMapper jsonMapper = new ObjectMapper();
+			ObjectMapper cborMapper = new ObjectMapper(new CBORFactory());
+			jsonConverter = new JsonConverter(jsonMapper, cborMapper);
 		} else {
-			webAuthnRegistrationRequestValidator = applicationContext.getBean(WebAuthnRegistrationRequestValidator.class);
+			jsonConverter = applicationContext.getBean(JsonConverter.class);
 		}
-		return webAuthnRegistrationRequestValidator;
+		return jsonConverter;
 	}
 
-	public static <H extends HttpSecurityBuilder<H>> WebAuthnAuthenticationManager getOrCreateWebAuthnAuthenticationManager(H http) {
+	private static <H extends HttpSecurityBuilder<H>> WebAuthnRegistrationContextValidator getOrCreateWebAuthnRegistrationContextValidator(H http) {
 		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		WebAuthnAuthenticationManager webAuthnAuthenticationManager;
-		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnAuthenticationManager.class);
+		WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator;
+		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnRegistrationContextValidator.class);
 		if (beanNames.length == 0) {
-			webAuthnAuthenticationManager = new WebAuthn4JWebAuthnAuthenticationManager(
-					getOrCreateWebAuthnRegistrationContextValidator(http),
-					getOrCreateWebAuthnAuthenticationContextValidator(http),
-					getOrCreateJsonConverter(http).getCborConverter()
-			);
+			webAuthnRegistrationContextValidator = WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator();
 		} else {
-			webAuthnAuthenticationManager = applicationContext.getBean(WebAuthnAuthenticationManager.class);
+			webAuthnRegistrationContextValidator = applicationContext.getBean(WebAuthnRegistrationContextValidator.class);
 		}
-		return webAuthnAuthenticationManager;
+		return webAuthnRegistrationContextValidator;
 	}
 
 	private static <H extends HttpSecurityBuilder<H>> WebAuthnAuthenticationContextValidator getOrCreateWebAuthnAuthenticationContextValidator(H http) {
@@ -123,15 +110,15 @@ public class WebAuthnConfigurerUtil {
 		return webAuthnAuthenticationContextValidator;
 	}
 
-	public static <H extends HttpSecurityBuilder<H>> WebAuthnRegistrationContextValidator getOrCreateWebAuthnRegistrationContextValidator(H http) {
+	private static <H extends HttpSecurityBuilder<H>> WebAuthnChallengeRepository getOrCreateChallengeRepository(H http) {
 		ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
-		WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator;
-		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnRegistrationContextValidator.class);
+		WebAuthnChallengeRepository webAuthnChallengeRepository;
+		String[] beanNames = applicationContext.getBeanNamesForType(WebAuthnChallengeRepository.class);
 		if (beanNames.length == 0) {
-			webAuthnRegistrationContextValidator = WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator();
+			webAuthnChallengeRepository = new HttpSessionWebAuthnChallengeRepository();
 		} else {
-			webAuthnRegistrationContextValidator = applicationContext.getBean(WebAuthnRegistrationContextValidator.class);
+			webAuthnChallengeRepository = applicationContext.getBean(WebAuthnChallengeRepository.class);
 		}
-		return webAuthnRegistrationContextValidator;
+		return webAuthnChallengeRepository;
 	}
 }

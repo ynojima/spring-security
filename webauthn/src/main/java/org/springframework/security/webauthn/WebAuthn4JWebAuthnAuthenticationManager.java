@@ -101,6 +101,26 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 
 	}
 
+	@Override
+	public String getEffectiveRpId(HttpServletRequest request) {
+		String effectiveRpId;
+		if (this.rpId != null) {
+			effectiveRpId = this.rpId;
+		} else {
+			WebAuthnOrigin origin = WebAuthnOrigin.create(request);
+			effectiveRpId = origin.getHost();
+		}
+		return effectiveRpId;
+	}
+
+	public String getRpId() {
+		return rpId;
+	}
+
+	public void setRpId(String rpId) {
+		this.rpId = rpId;
+	}
+
 	private WebAuthnRegistrationContext createRegistrationContext(WebAuthnRegistrationRequest webAuthnRegistrationRequest) {
 
 		byte[] clientDataBytes = Base64UrlUtil.decode(webAuthnRegistrationRequest.getClientDataBase64url());
@@ -149,15 +169,4 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 				webAuthnServerProperty.getTokenBindingId());
 	}
 
-	@Override
-	public String getEffectiveRpId(HttpServletRequest request) {
-		String effectiveRpId;
-		if (this.rpId != null) {
-			effectiveRpId = this.rpId;
-		} else {
-			WebAuthnOrigin origin = WebAuthnOrigin.create(request);
-			effectiveRpId = origin.getHost();
-		}
-		return effectiveRpId;
-	}
 }

@@ -15,6 +15,7 @@
  */
 package org.springframework.security.webauthn.config.configurers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webauthn4j.converter.util.JsonConverter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.MFATokenEvaluator;
@@ -28,7 +29,6 @@ import org.springframework.security.web.authentication.ForwardAuthenticationSucc
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.security.webauthn.WebAuthnProcessingFilter;
-import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.util.Assert;
@@ -71,9 +71,9 @@ public final class WebAuthnLoginConfigurer<H extends HttpSecurityBuilder<H>> ext
 
 	//~ Instance fields
 	// ================================================================================================
-	private JsonConverter jsonConverter = null;
+	private ObjectMapper jsonMapper = null;
+	private ObjectMapper cborMapper = null;
 	private WebAuthnServerPropertyProvider webAuthnServerPropertyProvider = null;
-	private WebAuthnRegistrationRequestValidator webAuthnRegistrationRequestValidator;
 	private String usernameParameter = null;
 	private String passwordParameter = null;
 	private String credentialIdParameter = null;
@@ -97,8 +97,18 @@ public final class WebAuthnLoginConfigurer<H extends HttpSecurityBuilder<H>> ext
 	public void init(H http) throws Exception {
 		super.init(http);
 
-		if (jsonConverter == null) {
+		JsonConverter jsonConverter;
+		if (jsonMapper == null && cborMapper == null) {
 			jsonConverter = WebAuthnConfigurerUtil.getOrCreateJsonConverter(http);
+		}
+		else {
+			if(jsonMapper == null){
+				jsonMapper = new ObjectMapper();
+			}
+			if(cborMapper == null){
+				cborMapper = new ObjectMapper();
+			}
+			jsonConverter = new JsonConverter(jsonMapper, cborMapper);
 		}
 		http.setSharedObject(JsonConverter.class, jsonConverter);
 
@@ -106,11 +116,6 @@ public final class WebAuthnLoginConfigurer<H extends HttpSecurityBuilder<H>> ext
 			webAuthnServerPropertyProvider = WebAuthnConfigurerUtil.getOrCreateServerPropertyProvider(http);
 		}
 		http.setSharedObject(WebAuthnServerPropertyProvider.class, webAuthnServerPropertyProvider);
-
-		if (webAuthnRegistrationRequestValidator == null) {
-			webAuthnRegistrationRequestValidator = WebAuthnConfigurerUtil.getOrCreateWebAuthnRegistrationRequestValidator(http);
-		}
-		http.setSharedObject(WebAuthnRegistrationRequestValidator.class, webAuthnRegistrationRequestValidator);
 	}
 
 	/**
@@ -150,14 +155,26 @@ public final class WebAuthnLoginConfigurer<H extends HttpSecurityBuilder<H>> ext
 	}
 
 	/**
-	 * Specifies the {@link JsonConverter} to be used.
+	 * Specifies the {@link ObjectMapper} to be used to serialize JSON.
 	 *
-	 * @param jsonConverter the {@link JsonConverter}
+	 * @param jsonMapper the {@link ObjectMapper}
 	 * @return the {@link WebAuthnLoginConfigurer} for additional customization
 	 */
-	public WebAuthnLoginConfigurer<H> jsonConverter(JsonConverter jsonConverter) {
-		Assert.notNull(jsonConverter, "jsonConverter must not be null");
-		this.jsonConverter = jsonConverter;
+	public WebAuthnLoginConfigurer<H> jsonMapper(ObjectMapper jsonMapper) {
+		Assert.notNull(jsonMapper, "jsonMapper must not be null");
+		this.jsonMapper = jsonMapper;
+		return this;
+	}
+
+	/**
+	 * Specifies the {@link ObjectMapper} to be used to serialize CBOR.
+	 *
+	 * @param cborMapper the {@link ObjectMapper}
+	 * @return the {@link WebAuthnLoginConfigurer} for additional customization
+	 */
+	public WebAuthnLoginConfigurer<H> cborMapper(ObjectMapper cborMapper) {
+		Assert.notNull(cborMapper, "cborMapper must not be null");
+		this.cborMapper = cborMapper;
 		return this;
 	}
 

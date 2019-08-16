@@ -30,19 +30,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.webauthn.WebAuthn4JWebAuthnAuthenticationManager;
 import org.springframework.security.webauthn.WebAuthnAuthenticationManager;
+import org.springframework.security.webauthn.WebAuthnOptionWebHelper;
 import org.springframework.security.webauthn.WebAuthnRegistrationRequestValidator;
 import org.springframework.security.webauthn.challenge.HttpSessionWebAuthnChallengeRepository;
 import org.springframework.security.webauthn.challenge.WebAuthnChallengeRepository;
 import org.springframework.security.webauthn.server.EffectiveRpIdProvider;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProvider;
 import org.springframework.security.webauthn.server.WebAuthnServerPropertyProviderImpl;
+import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 
 @Configuration
 public class WebSecurityBeanConfig {
 
 	@Bean
-	public WebAuthnServerPropertyProvider webAuthnServerPropertyProvider(EffectiveRpIdProvider effectiveRpIdProvider, WebAuthnChallengeRepository webAuthnChallengeRepository){
-		return new WebAuthnServerPropertyProviderImpl(effectiveRpIdProvider, webAuthnChallengeRepository);
+	public WebAuthnServerPropertyProvider webAuthnServerPropertyProvider(EffectiveRpIdProvider effectiveRpIdProvider, WebAuthnChallengeRepository challengeRepository){
+		return new WebAuthnServerPropertyProviderImpl(effectiveRpIdProvider, challengeRepository);
 	}
 
 	@Bean
@@ -63,6 +65,11 @@ public class WebSecurityBeanConfig {
 	@Bean
 	public WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator(){
 		return WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator();
+	}
+
+	@Bean
+	public WebAuthnOptionWebHelper webAuthnOptionWebHelper(WebAuthnChallengeRepository challengeRepository, WebAuthnUserDetailsService userDetailsService){
+		return new WebAuthnOptionWebHelper(challengeRepository, userDetailsService);
 	}
 
 	@Bean

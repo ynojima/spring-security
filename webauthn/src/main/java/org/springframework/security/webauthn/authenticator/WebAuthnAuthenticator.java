@@ -39,6 +39,7 @@ public interface WebAuthnAuthenticator {
 	Set<AuthenticatorTransport> getTransports();
 
 	String getClientExtensions();
+
 	void setClientExtensions(String clientExtensions);
 
 }
