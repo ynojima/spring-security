@@ -25,6 +25,7 @@ import org.springframework.util.Assert;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenticationManager {
 
@@ -75,8 +76,15 @@ public class WebAuthn4JWebAuthnAuthenticationManager implements WebAuthnAuthenti
 
 		AttestationObject attestationObject = cborConverter.readValue(webAuthnAuthenticator.getAttestationObject(), AttestationObject.class);
 
-		Set<AuthenticatorTransport> transports = webAuthnAuthenticator.getTransports();
-		transports = transports == null ? Collections.emptySet() : transports;
+		Set<AuthenticatorTransport> transports;
+		if (webAuthnAuthenticator.getTransports() == null) {
+			transports = Collections.emptySet();
+		}
+		else {
+			transports = webAuthnAuthenticator.getTransports().stream()
+					.map(transport -> AuthenticatorTransport.create(transport.getValue()))
+					.collect(Collectors.toSet());
+		}
 
 		Authenticator authenticator = new AuthenticatorImpl(
 				attestationObject.getAuthenticatorData().getAttestedCredentialData(),

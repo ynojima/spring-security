@@ -16,12 +16,8 @@
 
 package org.springframework.security.webauthn.authenticator;
 
-import com.webauthn4j.data.AuthenticatorTransport;
-import com.webauthn4j.data.extension.authenticator.RegistrationExtensionAuthenticatorOutput;
-import com.webauthn4j.data.extension.client.RegistrationExtensionClientOutput;
 import org.springframework.security.webauthn.userdetails.WebAuthnUserDetailsService;
 
-import java.util.Map;
 import java.util.Set;
 
 /**

@@ -16,7 +16,7 @@
 
 package org.springframework.security.webauthn.sample.app.web;
 
-import com.webauthn4j.data.AuthenticatorTransport;
+import org.springframework.security.webauthn.authenticator.AuthenticatorTransport;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

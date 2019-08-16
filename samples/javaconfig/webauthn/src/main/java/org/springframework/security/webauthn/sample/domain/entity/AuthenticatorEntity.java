@@ -16,7 +16,7 @@
 
 package org.springframework.security.webauthn.sample.domain.entity;
 
-import com.webauthn4j.data.AuthenticatorTransport;
+import org.springframework.security.webauthn.authenticator.AuthenticatorTransport;
 import org.springframework.security.webauthn.authenticator.WebAuthnAuthenticator;
 
 import java.util.Set;
